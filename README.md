@@ -20,3 +20,7 @@ Vid varje push till `main` byggs och deployas hela sajten automatiskt.
 - `fonts/*.b64` — subsettade webbfonter (base64-text; dekodas i bygget)
 
 Ändra i källan → pusha → live. Fullständig dokumentation i koncernens docs-arkiv.
+
+## Status
+
+- 2026-07-11: Kedjan verifierad hela vägen — verkstad (VS Code/Claude Code på kraftnoden), moln (Code-fliken) och Cowork-direktpush. Live på guiltypleasure-se.pages.dev.
