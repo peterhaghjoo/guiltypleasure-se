@@ -15,6 +15,7 @@ echo "== 3/4 Bygger alla sidor =="
 python3 build.py
 python3 build_en.py
 python3 build_menu.py
+python3 build_menu_en.py
 python3 build_en_cities.py
 python3 build_intent.py
 python3 og_gen_ci.py
