@@ -61,6 +61,43 @@ QA_REQUIRED = [
     ("STOR grädde på eld (ortkort)",  ratio(GRADDE, ELD),   3.0),
 ]
 
+# ---- A11y-BINDNINGAR: selector -> färgpar -> storlekskrav ---------------------
+# Lighthouse-baseline 2026-07-11 hittade eldfärgad LITEN text (3,25:1 < 4,5:1)
+# på fyra ställen efter designportningen: dagens rad i öppettiderna, brödsmule-
+# länken, footer-rubrikerna och infokorts-/faktakortsrubrikerna (94-95 i a11y,
+# skulle vara 100). QA_REQUIRED räckte inte — den mäter abstrakta färgpar men
+# band dem aldrig till faktiska textstorlekar. Det är exakt hålet NATTRAPPORT
+# beskrev. Bindningarna görs här: grinden failar om (a) den fixade CSS-
+# deklarationen försvinner, (b) den gamla regressionen kommer tillbaka, eller
+# (c) färgparet inte längre klarar kravet för sin storlek.
+def wcag_krav(px, fet):
+    """WCAG-tröskel: stor text (>=24px, eller >=18.66px fet) = 3.0:1, annars 4.5:1.
+    px=None betyder icke-text (grafik/UI, SC 1.4.11) = 3.0:1."""
+    if px is None: return 3.0
+    return 3.0 if (px >= 24 or (fet and px >= 18.66)) else 4.5
+
+QA_BOUND = [
+    # (namn, css som MÅSTE finnas, css som ALDRIG får återvända, fg, bg, px, fet)
+    ("hours dagens rad: fet text i arvsfärg",
+     "table.hours tr.today td{font-weight:700}",
+     "table.hours tr.today td{color:var(--fire)", MOSSA, GRADDE, 15, True),
+    ("hours dagens rad: eld-punkt som GRAFIK (1.4.11)",
+     "table.hours tr.today td:first-child::before{background:var(--fire)}",
+     None, ELD, GRADDE, None, False),
+    ("brödsmulelänk: mossa + understrykning (13px liten text)",
+     ".crumbs a{text-decoration:underline;color:var(--moss)}",
+     ".crumbs a{text-decoration:none;color:var(--fire)}", MOSSA, GRADDE, 13, True),
+    ("footer h3: eld i 19px fet (stor text)",
+     "footer h3{font-size:19px;color:var(--fire)}",
+     "footer h3{font-size:14px", ELD, GRADDE, 19, True),
+    (".infocard h3: eld i 19px fet (stor text)",
+     ".infocard h3{font-family:var(--body);font-size:19px;color:var(--fire);",
+     ".infocard h3{font-family:var(--body);font-size:15px", ELD, GRADDE, 19, True),
+    (".fact h3: eld i 19px fet (stor text)",
+     ".fact h3{font-size:19px;color:var(--fire)}",
+     ".fact h3{font-size:15px", ELD, GRADDE, 19, True),
+]
+
 CSS = """
   /* ==========================================================================
      GP:s designsystem — portat från den godkända Claude Design-mockupen
@@ -222,7 +259,7 @@ CSS = """
   .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
   @media(max-width:760px){.facts{grid-template-columns:1fr}}
   .fact{border:2px solid var(--moss);border-radius:26px;padding:24px;background:var(--cream)}
-  .fact h3{font-size:15px;color:var(--fire)}
+  .fact h3{font-size:19px;color:var(--fire)}  /* 19px fet = stor text -> eld OK */
   .fact p{font-size:15px}
 
   /* ---- Ortkort: eldblock med stadsnamnet i displaytypsnitt ------------------
@@ -250,7 +287,8 @@ CSS = """
      och en gatuadress i 54px displaytypsnitt vore bara löjligt. */
   .infocard{background:var(--cream);border:2px solid var(--moss);border-radius:26px;
     padding:28px 26px}
-  .infocard h3{font-family:var(--body);font-size:15px;color:var(--fire);
+  /* 19px fet = stor text -> eld (3,25:1) klarar 3,0:1-kravet. På 15px föll den. */
+  .infocard h3{font-family:var(--body);font-size:19px;color:var(--fire);
     text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
   .infocard p{font-size:15.5px;margin-bottom:8px}
 
@@ -258,7 +296,16 @@ CSS = """
   table.hours{width:100%;border-collapse:collapse;font-size:15px;margin:14px 0}
   table.hours td{padding:9px 0;border-bottom:1px solid var(--line)}
   table.hours td:last-child{text-align:right;font-weight:700}
-  table.hours tr.today td{color:var(--fire);font-weight:700}
+  /* Dagens rad: FET text i ytans arvsfärg + eld-PUNKT (grafik, inte text).
+     Eld på grädde är 3,25:1 och får INTE bära liten text (kravet är 4,5:1) —
+     det var Lighthouse-regressionen 2026-07-11. Punkten är icke-text: SC 1.4.11
+     kräver 3,0:1, och 3,25:1 klarar det. Fetstilen gör att signalen inte hänger
+     på färg ensam (SC 1.4.1). En osynlig punkt reserveras på ALLA rader så att
+     .today (sätts av JS efter load) inte knuffar layouten — noll CLS. */
+  table.hours td:first-child::before{content:"";display:inline-block;width:8px;height:8px;
+    border-radius:50%;background:transparent;margin-right:8px;vertical-align:1px}
+  table.hours tr.today td{font-weight:700}
+  table.hours tr.today td:first-child::before{background:var(--fire)}
   .surf-moss table.hours td{border-color:var(--line-cream)}
   .surf-moss table.hours tr.today td{color:var(--disco)}
 
@@ -277,7 +324,11 @@ CSS = """
   .story .lead{font-size:20px;font-weight:700}
   .crumbs{font-size:13px;padding:18px 0 0;text-transform:uppercase;letter-spacing:.06em;
     font-weight:700}
-  .crumbs a{text-decoration:none;color:var(--fire)}
+  /* Länkkonvention i stället för eldfärg: 13px är liten text, och eld på
+     grädde (3,25:1) faller under 4,5:1-kravet. Mossa + understrykning — även
+     vid hover, eftersom hover-tillstånd inte undantas av WCAG. */
+  .crumbs a{text-decoration:underline;color:var(--moss)}
+  .crumbs a:hover{color:var(--moss)}
   .stickycta{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:60;
     display:none}
   @media(max-width:820px){.stickycta{display:inline-block}}
@@ -296,7 +347,8 @@ CSS = """
     margin-top:0}
   .fgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px;margin-bottom:26px}
   @media(max-width:760px){.fgrid{grid-template-columns:1fr}}
-  footer h3{font-size:14px;color:var(--fire)}
+  /* 19px fet = stor text -> 3,0:1 gäller -> eld (3,25:1) OK. På 14px föll den. */
+  footer h3{font-size:19px;color:var(--fire)}
   footer p{margin-bottom:6px}
   footer .soc a{font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:13px;
     margin-right:14px}
@@ -893,6 +945,20 @@ if __name__ == "__main__":
         status = "OK " if uppmatt >= krav else "FEL"
         report.append(f"  [{status}] {namn}: {uppmatt:.2f}:1 (krav {krav})")
         assert uppmatt >= krav, f"KONTRASTBROTT: {namn} = {uppmatt:.2f}:1, krävs {krav}:1"
+
+    # A11y-bindningsgrind: selector -> färgpar -> STORLEK (se QA_BOUND).
+    # Failar om en fixad deklaration försvinner, om den gamla regressionen
+    # återvänder, eller om paret inte klarar kravet för sin storlek.
+    for namn, maste, aldrig, fg, bg, px, fet in QA_BOUND:
+        assert maste in CSS, f"A11Y-BINDNING BRUTEN: '{maste}' saknas i CSS — {namn}"
+        if aldrig:
+            assert aldrig not in CSS, f"A11Y-REGRESSION: '{aldrig}' är tillbaka i CSS — {namn}"
+        krav = wcag_krav(px, fet)
+        r = ratio(fg, bg)
+        status = "OK " if r >= krav else "FEL"
+        report.append(f"  [{status}] a11y-bindning · {namn}: {r:.2f}:1 (krav {krav})")
+        assert r >= krav, f"A11Y-BINDNING: {namn} = {r:.2f}:1, krävs {krav}:1"
+    report.append(f"a11y-bindningar: {len(QA_BOUND)} selector->par->storlek, alla gröna")
     # ordräkning stadstexter
     import html as h
     for key,story in (("umea",UMEA_STORY),("sundsvall",SUNDSVALL_STORY)):
