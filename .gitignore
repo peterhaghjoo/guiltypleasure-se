@@ -29,3 +29,14 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+
+# Lokala testverktyg (Playwright) — committas ALDRIG.
+# Repots arkitektur är npm-fri per CLAUDE.md; detta är bara verifieringsverktyg
+# som körs på min dator och aldrig deployas.
+node_modules/
+package.json
+package-lock.json
+playwright.config.mjs
+test-results/
+playwright-report/
+playwright-local/
