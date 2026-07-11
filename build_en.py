@@ -99,27 +99,27 @@ def hub_en():
     return fix_amps(html)
 
 def main():
-    (ROOT/"en/index.html").write_text(hub_en())
+    (ROOT/"en/index.html").write_text(hub_en(), encoding="utf-8")
 
     # hreflang: bidirektionell hubb sv<->en + x-default, självrefererande på stadssidor
     HREF_SV = '<link rel="alternate" hreflang="sv" href="https://www.guiltypleasure.se/">\n<link rel="alternate" hreflang="en" href="https://www.guiltypleasure.se/en/">\n<link rel="alternate" hreflang="x-default" href="https://www.guiltypleasure.se/">'
     for f,tag in (("index.html",HREF_SV),("en/index.html",HREF_SV)):
-        p=(ROOT/f); s=p.read_text()
+        p=(ROOT/f); s=p.read_text(encoding="utf-8")
         if 'hreflang' not in s:
             s=s.replace('<link rel="canonical"', tag+'\n<link rel="canonical"')
-            p.write_text(s)
+            p.write_text(s, encoding="utf-8")
 
     # sitemap + verifiering
-    sm=(ROOT/"sitemap.xml").read_text()
+    sm=(ROOT/"sitemap.xml").read_text(encoding="utf-8")
     if "/en/" not in sm:
         sm=sm.replace("</urlset>",'  <url><loc>https://www.guiltypleasure.se/en/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>\n</urlset>')
-        (ROOT/"sitemap.xml").write_text(sm)
+        (ROOT/"sitemap.xml").write_text(sm, encoding="utf-8")
 
-    s=(ROOT/"en/index.html").read_text()
+    s=(ROOT/"en/index.html").read_text(encoding="utf-8")
     blocks=re.findall(r'<script type="application/ld\+json">(.*?)</script>', s, re.S)
     for b in blocks: json.loads(b)
     assert 'lang="en"' in s and "tel:" not in s and "hreflang" in s
-    assert "hreflang" in (ROOT/"index.html").read_text()
+    assert "hreflang" in (ROOT/"index.html").read_text(encoding="utf-8")
     print(f"en/index.html: {len(s)//1024} KB, {len(blocks)} schema OK, hreflang OK, sitemap: {'/en/' in sm}")
 
 if __name__ == "__main__":
