@@ -190,7 +190,7 @@ html = head(title,desc,"/meny/",extra_schema=schema,fontpath="../fonts/",og="og-
       <details class="mrow"><summary><b>1 Small Plate + 1 Big Plate</b><span class="dots"></span><span class="price">299</span></summary><p>Gäller hela dagen, hela kvällen. Lobster +50 · Steak +100.</p></details>
     </div>
   </section>
-  <section class="wrap" id="bar">
+  <section class="wrap surf-moss" id="bar">
     <div class="kicker">Sida 2 · Skål!</div>
     <h2>Baren <span class="accent">— cocktails, vin &amp; öl</span></h2>
     <p class="sub" style="margin:0 0 22px">Drinkpaket: Bubbel + Öl/Vin + Kaffe 149 · Alkoholfritt paket 119.</p>

@@ -62,7 +62,7 @@ def hub_en():
       <article class="act"><span class="tagpill">Act 3</span><h3>Disco</h3><p>When darkness falls, I turn it up. Fridays and Saturdays open till 1 am.</p></article>
     </div>
   </section>
-  <section class="wrap" id="signaturer">
+  <section class="wrap surf-moss" id="signaturer">
     <div class="kicker">From the bar</div>
     <h2>Signatures <span class="accent">&amp; guilty pleasures</span></h2>
     <div class="menucard">{MENU_EN}</div>
@@ -85,13 +85,17 @@ def hub_en():
       </div>
     </div>
   </section>
-  <section class="igband">
-    <div class="wrap" style="padding-top:52px;padding-bottom:52px">
-      <div class="kicker">Almost daily</div>
-      <h2>Follow <span class="accent">@guiltypleasure.se</span></h2>
-      <p>Today's special, new drinks and everything that happens after dark — it drops on Instagram first.</p>
-      <a class="btn btn-pink" href="https://www.instagram.com/guiltypleasure.se/" rel="noopener">Follow on Instagram</a>
-    </div>
+  <section class="wrap surf-disco dogs">
+    <div class="kicker">The dog is welcome</div>
+    <h2>Bring your dog.</h2>
+    <p>It's not just you who's welcome — your four-legged best friend too. Dogs are always welcome in both Umeå and Sundsvall, and there's water waiting. Dog friendly, always.</p>
+    <div class="chips"><span class="chip">Water bowl</span><span class="chip">Dogs inside</span><span class="chip">Always welcome</span></div>
+  </section>
+  <section class="wrap surf-moss igband">
+    <div class="kicker">Almost daily</div>
+    <h2>Follow <span class="accent">@guiltypleasure.se</span></h2>
+    <p>Today's special, new drinks and everything that happens after dark — it drops on Instagram first.</p>
+    <a class="btn btn-pink" href="https://www.instagram.com/guiltypleasure.se/" rel="noopener">Follow on Instagram</a>
   </section>
 </main>
 """ + footer("../").replace("Häng med mig","Follow along").replace("Telefon? Min AI-värdinna svarar från augusti. Tills dess: maila eller DM:a.","No phone yet — my AI host answers from August. Until then: email or DM.").replace("Drop-in only — bara kom in.","Walk-ins only — just come in.").replace("Boka bord online</a> — eller kom förbi.","Book a table online</a> — or drop by.").replace("· karta</a>","· map</a>").replace('>karta<','>map<')

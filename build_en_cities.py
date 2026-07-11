@@ -118,7 +118,7 @@ def city_page_en(key):
     <h2>This is <span class="accent">GP's {c['name']}</span></h2>
     {story}
   </section>
-  <section class="wrap">
+  <section class="wrap surf-moss">
     <div class="kicker">From the bar</div>
     <h2>Signatures <span class="accent">&amp; guilty pleasures</span></h2>
     <div class="menucard">{menu_rows}</div>
@@ -127,14 +127,20 @@ def city_page_en(key):
     <div class="kicker">The practical bits</div>
     <h2>Find us <span class="accent">&amp; opening hours</span></h2>
     <div class="cities">
-      <div class="city">
+      <div class="infocard">
         <h3>{c['street']}, {c['postal']} {c['name']}</h3>
         <p>GP's — Guilty Pleasure Café is at {c['street']} in central {c['name']}. <a href="{c['maps']}" rel="noopener">Open directions in maps</a>.</p>
         <p><a href="mailto:{c['email']}">{c['email']}</a></p>
-        <p style="font-size:14px;opacity:.85">{policy}</p>
+        <p style="font-size:14px">{policy}</p>
       </div>
-      <div class="city">{en_hours_table(key)}</div>
+      <div class="infocard"><h3>Opening hours</h3>{en_hours_table(key)}</div>
     </div>
+  </section>
+  <section class="wrap surf-disco dogs">
+    <div class="kicker">The dog is welcome</div>
+    <h2>Bring your dog.</h2>
+    <p>It's not just you who's welcome — your four-legged best friend too. Dogs are always welcome, and there's water waiting. Dog friendly, always.</p>
+    <div class="chips"><span class="chip">Water bowl</span><span class="chip">Dogs inside</span><span class="chip">Always welcome</span></div>
   </section>
   <section class="wrap">
     <div class="kicker">Quick answers</div>
