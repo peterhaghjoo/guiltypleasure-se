@@ -58,7 +58,7 @@ def hub_en():
     <div class="acts">
       <article class="act"><span class="tagpill">Act 1</span><h3>Brunch</h3><p>Long mornings, frozen mimosas and comfort classics. Arrive hungry, leave happy.</p></article>
       <article class="act"><span class="tagpill">Act 2</span><h3>Dinner</h3><p>New York bistro meets northern Swedish hospitality. Food comes fast — company stays late.</p></article>
-      <article class="act"><span class="tagpill">Act 3</span><h3>Disco</h3><p>When darkness falls, I turn it up. Fridays and Saturdays open till midnight.</p></article>
+      <article class="act"><span class="tagpill">Act 3</span><h3>Disco</h3><p>When darkness falls, I turn it up. Fridays and Saturdays open till 1 am.</p></article>
     </div>
   </section>
   <section class="wrap" id="signaturer">

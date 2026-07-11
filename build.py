@@ -141,24 +141,24 @@ try{{document.fonts.add(new FontFace("Guilty Pleasure",Uint8Array.from(atob("{FO
 
 CITIES = {
   "umea": dict(
-    name="Umeå", street="Skolgatan 62", email="umea@guiltypleasure.se",
+    name="Umeå", street="Skolgatan 62", postal="903 29", email="umea@guiltypleasure.se",
     maps="https://maps.google.com/?q=Guilty+Pleasure+Caf%C3%A9+Skolgatan+62+Ume%C3%A5",
     reviews="https://www.google.com/search?q=Guilty+Pleasure+Caf%C3%A9+Ume%C3%A5+recensioner",
     region="Västerbottens län", booking=None,
-    hours_txt=[("Måndag","11–22"),("Tisdag","11–22"),("Onsdag","11–23"),("Torsdag","11–23"),("Fredag","11–00"),("Lördag","11.30–00"),("Söndag","11.30–22")],
-    hours_js="{1:[660,1320],2:[660,1320],3:[660,1380],4:[660,1380],5:[660,1440],6:[690,1440],0:[690,1320]}",
-    hours_schema=[["Monday","Tuesday","11:00","22:00"],["Wednesday","Thursday","11:00","23:00"],["Friday","Friday","11:00","00:00"],["Saturday","Saturday","11:30","00:00"],["Sunday","Sunday","11:30","22:00"]],
+    hours_txt=[("Måndag","11.30–22"),("Tisdag","11.30–00"),("Onsdag","11.30–00"),("Torsdag","11.30–00"),("Fredag","11.30–01"),("Lördag","11.30–01"),("Söndag","11.30–22")],
+    hours_js="{1:[690,1320],2:[690,1440],3:[690,1440],4:[690,1440],5:[690,1500],6:[690,1500],0:[690,1320]}",
+    hours_schema=[["Monday","Monday","11:30","22:00"],["Tuesday","Thursday","11:30","00:00"],["Friday","Saturday","11:30","01:00"],["Sunday","Sunday","11:30","22:00"]],
     hero_h1="Umeås guilty pleasure sedan 2021",
     hero_sub="Jag är flaggskeppet. Mitt i stan, på Skolgatan 62 — där cravings möter good vibes.",
   ),
   "sundsvall": dict(
-    name="Sundsvall", street="Storgatan 12", email="sundsvall@guiltypleasure.se",
+    name="Sundsvall", street="Storgatan 12", postal="852 31", email="sundsvall@guiltypleasure.se",
     maps="https://maps.google.com/?q=Guilty+Pleasure+Caf%C3%A9+Storgatan+12+Sundsvall",
     reviews="https://www.google.com/search?q=Guilty+Pleasure+Caf%C3%A9+Sundsvall+recensioner",
     region="Västernorrlands län", booking="https://app.bokabord.se",
-    hours_txt=[("Måndag","11–21"),("Tisdag","11–21"),("Onsdag","11–22"),("Torsdag","11–22"),("Fredag","11–00"),("Lördag","11–00"),("Söndag","11–21")],
-    hours_js="{1:[660,1260],2:[660,1260],3:[660,1320],4:[660,1320],5:[660,1440],6:[660,1440],0:[660,1260]}",
-    hours_schema=[["Monday","Tuesday","11:00","21:00"],["Wednesday","Thursday","11:00","22:00"],["Friday","Saturday","11:00","00:00"],["Sunday","Sunday","11:00","21:00"]],
+    hours_txt=[("Måndag","11–22"),("Tisdag","11–22"),("Onsdag","11–00"),("Torsdag","11–00"),("Fredag","11–01"),("Lördag","11–01"),("Söndag","11–22")],
+    hours_js="{1:[660,1320],2:[660,1320],3:[660,1440],4:[660,1440],5:[660,1500],6:[660,1500],0:[660,1320]}",
+    hours_schema=[["Monday","Tuesday","11:00","22:00"],["Wednesday","Thursday","11:00","00:00"],["Friday","Saturday","11:00","01:00"],["Sunday","Sunday","11:00","22:00"]],
     hero_h1="Finger-licking good — mitt i Stenstan",
     hero_sub="Jag är GP's i Sundsvall. Storgatan 12 — food and drinks, all day, everyday.",
   ),
@@ -251,7 +251,7 @@ def footer(base=""):
         <p>Telefon? Min AI-värdinna svarar från augusti. Tills dess: maila eller DM:a.</p>
       </div>
     </div>
-    <p class="fin">See you at GP's for a delicious time, friend. 💚 · © 2026 Guilty Pleasure · Umeå & Sundsvall</p>
+    <p class="fin">See you at GP's for a delicious time, friend. 💚 · © 2026 Guilty Pleasure</p>
   </div>
 </footer>
 </body>
@@ -264,8 +264,12 @@ def status_js(cities_js, closes=True):
   var H = {cities_js};
   var now=new Date(), d=now.getDay(), m=now.getHours()*60+now.getMinutes();
   Object.keys(H).forEach(function(c){{
-    var s=H[c][d], open=(m>=s[0]&&m<s[1]);
-    var t = open ? ('Öppet nu · stänger '+(s[1]===1440?'00':String(Math.floor(s[1]/60)).padStart(2,'0'))) : 'Stängt just nu';
+    var s=H[c][d], y=H[c][(d+6)%7];
+    var spill=(y[1]>1440 && m < y[1]-1440);
+    var open=(m>=s[0]&&m<Math.min(s[1],1440))||spill;
+    var cm=spill?y[1]:s[1];
+    var lbl=cm>=1440?String(Math.floor((cm-1440)/60)).padStart(2,'0'):String(Math.floor(cm/60)).padStart(2,'0');
+    var t = open ? ('Öppet nu · stänger '+lbl) : 'Stängt just nu';
     document.querySelectorAll('.cstatus[data-city="'+c+'"]').forEach(function(el){{
       el.textContent=t; el.className='cstatus '+(open?'open':'closed');
     }});
@@ -288,7 +292,7 @@ def rest_schema(city_key, page_url):
       "name":f"GP's — Guilty Pleasure Café {c['name']}",
       "servesCuisine":["Comfort food","Brunch","Cocktails"],
       "priceRange":"$$",
-      "address":{"@type":"PostalAddress","streetAddress":c["street"],"addressLocality":c["name"],"addressRegion":c["region"],"addressCountry":"SE"},
+      "address":{"@type":"PostalAddress","streetAddress":c["street"],"postalCode":c["postal"],"addressLocality":c["name"],"addressRegion":c["region"],"addressCountry":"SE"},
       "email":c["email"],"url":f"https://www.guiltypleasure.se/{city_key}/",
       "acceptsReservations": (c["booking"] if c["booking"] else "False"),
       "hasMap":c["maps"],
@@ -314,19 +318,19 @@ def faq_html(qas):
 # ---------------- STADSSIDOR ----------------
 UMEA_STORY = """
 <p class="lead">Jag öppnade på Skolgatan 62 år 2021 med en enkel idé: Umeå förtjänade ett ställe där brunchen inte tar slut bara för att klockan gör det.</p>
-<p>Sedan dess har jag varit stans New York-inspirerade comfort bistro — flaggskeppet i Guilty Pleasure-familjen. Hos mig börjar dagen med frozen mimosas och comfort-klassiker, glider över i middag när eftermiddagen tröttnat, och slutar på helgerna i något som bäst beskrivs som disco. Fredagar och lördagar håller jag igång till midnatt, och ja — det märks.</p>
+<p>Sedan dess har jag varit stans New York-inspirerade comfort bistro — flaggskeppet i Guilty Pleasure-familjen. Hos mig börjar dagen med frozen mimosas och comfort-klassiker, glider över i middag när eftermiddagen tröttnat, och slutar på helgerna i något som bäst beskrivs som disco. Fredagar och lördagar håller jag igång till klockan ett, och ja — det märks.</p>
 <p>Du hittar mig mitt i centrala Umeå, ett stenkast från Rådhustorget och tio minuters promenad från Umeå Central. Kommer du med hunden? Ta med den in, vatten står framme. Kommer du med ett stort gäng en lördag? Kom tidigt — jag kör drop-in only, först till kvarn, och det är en princip jag är stolt över: livet är för kort för tomma bord som väntar på folk som inte dyker upp. Bordsbokning lanserar jag till hösten för er som vill planera — men spontaniteten kommer alltid ha förtur här.</p>
 <p>Baren är min scen. Signaturen heter Ghost of Prince — gin, viol, citron, ingefäraskum och salt — och den som inte dricker alkohol får ingen tråkig avbytarbänk: hela min No Regrets-lista är byggd med samma kärlek, från Virgin Prince till alkoholfri Coffee Granita i tre smaker. Kaffet? Självklart. Det är därför det står Café på skylten.</p>
 <p>Umeå är en stad som vaknar sent och lägger sig sent på helgen. Jag är byggd för exakt det.</p>
 
 <p>Vad menar jag med comfort food? Tänk maten du egentligen längtar efter — generös, het, lite oanständigt god — lagad på riktigt och serverad utan dröjsmål. New York-dinern är förebilden: högt tempo i köket, lågt tempo vid borden. Du ska hinna hit på lunchrasten om du vill, men ingen kommer titta konstigt på dig om du blir kvar till stängning. Det är hela poängen med ordet pleasure i mitt namn — och ordet guilty tar du med en nypa salt. Eller som saltkanten på margaritan.</p>
-<p>Helgerna är min paradgren. Brunchen rullar från öppning — frozen mimosas, kaffe som betyder något och comfort-klassiker tills eftermiddagen ger upp. Sen byter jag skepnad: ljuset sjunker, spellistan vaknar, och den som stannar kvar märker varför tredje akten heter disco. Ingen dresscode, ingen gästlista — bara stämning som stiger med timmarna fram till midnatt.</p>
+<p>Helgerna är min paradgren. Brunchen rullar från öppning — frozen mimosas, kaffe som betyder något och comfort-klassiker tills eftermiddagen ger upp. Sen byter jag skepnad: ljuset sjunker, spellistan vaknar, och den som stannar kvar märker varför tredje akten heter disco. Ingen dresscode, ingen gästlista — bara stämning som stiger med timmarna fram till stängning.</p>
 <p>Jag är en del av Guilty Pleasure-familjen, med en syster i Sundsvall och samma fyra färger i själen: eld, disco, mossa och grädde. Men Umeå är där allt började 2021, och det är här flaggan står. Kom förbi så förstår du.</p>
 """
 
 SUNDSVALL_STORY = """
 <p class="lead">Mitt i Stenstan, på Storgatan 12, serverar jag finger-licking good food and drinks — all day, everyday.</p>
-<p>Jag är Sundsvalls del av Guilty Pleasure-familjen: samma New York-inspirerade comfort bistro-själ som flaggskeppet i Umeå, men med min egen rytm. Stenstans stenhus och Storgatans puls sätter tonen — hit kommer du för en lång brunch i helgen, en middag som inte har bråttom, eller en fredagskväll som växer till något mer. Fredag och lördag håller jag öppet till midnatt.</p>
+<p>Jag är Sundsvalls del av Guilty Pleasure-familjen: samma New York-inspirerade comfort bistro-själ som flaggskeppet i Umeå, men med min egen rytm. Stenstans stenhus och Storgatans puls sätter tonen — hit kommer du för en lång brunch i helgen, en middag som inte har bråttom, eller en fredagskväll som växer till något mer. Fredag och lördag håller jag öppet till klockan ett.</p>
 <p>Till skillnad från min syster i norr tar jag emot bordsbokningar — boka online så står bordet redo när du kommer. Men dörren är lika öppen för dig som bara svänger förbi: drop-in är alltid välkommet, och baren har alltid plats för en till. Hundar? Välkomna, alltid. Vatten fixar jag.</p>
 <p>Ur baren händer samma magi som i Umeå: Ghost of Prince är signaturen, Frozen Blood Orange Mimosa äger bruncherna, och hela No Regrets-listan är alkoholfri på riktigt — inte en eftertanke. Menyn byter skepnad med säsongen, så fråga vad som är nytt.</p>
 <p>Sundsvall har alltid vetat hur man har trevligt. Jag är bara stället där det händer.</p>
@@ -340,7 +344,7 @@ SUNDSVALL_STORY = """
 
 UMEA_FAQ = [
   ("Kan man boka bord på GP's i Umeå?","Nej — jag kör drop-in only, först till kvarn. Det är en princip: livet är för kort för tomma bord. Bordsbokning lanseras under hösten 2026; tills dess är det bara att komma in på Skolgatan 62."),
-  ("Vilka öppettider har GP's i Umeå?","Måndag–tisdag 11–22, onsdag–torsdag 11–23, fredag 11–00, lördag 11.30–00 och söndag 11.30–22. Fredagar och lördagar är det öppet till midnatt."),
+  ("Vilka öppettider har GP's i Umeå?","Måndag 11.30–22, tisdag–torsdag 11.30–00, fredag–lördag 11.30–01 och söndag 11.30–22. Fredagar och lördagar är det öppet till klockan ett."),
   ("Var i Umeå ligger GP's?","På Skolgatan 62, mitt i centrala Umeå — nära Rådhustorget och cirka tio minuters promenad från Umeå Central."),
   ("Är hundar välkomna på GP's Umeå?","Ja, hundar är alltid välkomna. Vatten står framme."),
   ("Finns alkoholfria drinkar på GP's?","Ja — hela No Regrets-listan är alkoholfri, från Virgin Prince 0.0 (79 kr) till alkoholfri Coffee Granita. Priserna ligger på 39–89 kr."),
@@ -349,7 +353,7 @@ UMEA_FAQ = [
 
 SUNDSVALL_FAQ = [
   ("Kan man boka bord på GP's i Sundsvall?","Ja — boka online via bokabord, så står bordet redo. Drop-in funkar lika bra: dörren på Storgatan 12 är öppen och baren har alltid plats för en till."),
-  ("Vilka öppettider har GP's i Sundsvall?","Måndag–tisdag 11–21, onsdag–torsdag 11–22, fredag–lördag 11–00 och söndag 11–21. Helgkvällarna går till midnatt."),
+  ("Vilka öppettider har GP's i Sundsvall?","Måndag–tisdag 11–22, onsdag–torsdag 11–00, fredag–lördag 11–01 och söndag 11–22. Helgkvällarna går till klockan ett."),
   ("Var i Sundsvall ligger GP's?","På Storgatan 12, mitt i Stenstan — Sundsvalls stenstadskärna, nära Stora torget."),
   ("Är hundar välkomna på GP's Sundsvall?","Ja, alltid. Vatten fixar jag."),
   ("Hur kontaktar jag GP's i Sundsvall?","Maila sundsvall@guiltypleasure.se eller DM:a @guiltypleasure.se på Instagram. Telefon kommer i augusti 2026 — då svarar AI-värdinnan."),
@@ -362,7 +366,7 @@ def city_page(key):
     url=f"https://www.guiltypleasure.se/{key}/"
     title = f"Restaurang & bar i {c['name']} — GP's Guilty Pleasure Café, {c['street']}"
     desc = (f"New York-inspirerad comfort bistro på {c['street']}, {c['name']}. Brunch, dinner & disco. "
-            + ("Drop-in only, hundar välkomna. Öppet till midnatt fre–lör." if key=="umea" else "Boka bord online eller kom förbi — hundar välkomna. Öppet till midnatt fre–lör."))
+            + ("Drop-in only, hundar välkomna. Öppet till 01 fre–lör." if key=="umea" else "Boka bord online eller kom förbi — hundar välkomna. Öppet till 01 fre–lör."))
     schema = rest_schema(key,url) + "\n" + faq_schema(faqs,url)
     cta = (f'<a class="btn btn-fire stickycta" href="{c["booking"]}" rel="noopener">Boka bord</a>' if c["booking"]
            else f'<a class="btn btn-fire stickycta" href="{c["maps"]}" rel="noopener">Hitta hit</a>')
@@ -396,7 +400,7 @@ def city_page(key):
     <h2>Hitta hit <span class="accent">&amp; öppettider</span></h2>
     <div class="cities">
       <div class="city">
-        <h3>{c['street']}, {c['name']}</h3>
+        <h3>{c['street']}, {c['postal']} {c['name']}</h3>
         <p>GP's — Guilty Pleasure Café ligger på {c['street']} i centrala {c['name']}. <a href="{c['maps']}" rel="noopener">Öppna vägbeskrivning i kartor</a>.</p>
         <p><a href="mailto:{c['email']}">{c['email']}</a></p>
         <p style="font-size:14px;opacity:.85">{"Drop-in only — kom som du är. Bordsbokning lanseras hösten 2026." if key=="umea" else "Boka online eller kom förbi — båda funkar lika bra."}</p>
@@ -445,7 +449,7 @@ def hub():
     <div class="acts">
       <article class="act"><span class="tagpill">Akt 1</span><h3>Brunch</h3><p>Långa förmiddagar, frozen mimosas och comfort-klassiker. Kom hungrig, gå lycklig.</p></article>
       <article class="act"><span class="tagpill">Akt 2</span><h3>Dinner</h3><p>New York-bistro möter norrländsk gästvänlighet. Maten kommer snabbt — sällskapet stannar länge.</p></article>
-      <article class="act"><span class="tagpill">Akt 3</span><h3>Disco</h3><p>När mörkret faller vrider jag upp volymen. Fredagar och lördagar öppet till midnatt.</p></article>
+      <article class="act"><span class="tagpill">Akt 3</span><h3>Disco</h3><p>När mörkret faller vrider jag upp volymen. Fredagar och lördagar öppet till ett.</p></article>
     </div>
   </section>
   <section class="wrap" id="signaturer">
