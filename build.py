@@ -338,7 +338,7 @@ CITIES = {
     hours_js="{1:[690,1320],2:[690,1440],3:[690,1440],4:[690,1440],5:[690,1500],6:[690,1500],0:[690,1320]}",
     hours_schema=[["Monday","Monday","11:30","22:00"],["Tuesday","Thursday","11:30","00:00"],["Friday","Saturday","11:30","01:00"],["Sunday","Sunday","11:30","22:00"]],
     hero_h1="Umeås guilty pleasure sedan 2021",
-    hero_sub="Jag är flaggskeppet. Mitt i stan, på Skolgatan 62 — där cravings möter good vibes.",
+    hero_sub="Vi är flaggskeppet. Mitt i stan, på Skolgatan 62 — där cravings möter good vibes.",
   ),
   "sundsvall": dict(
     name="Sundsvall", street="Storgatan 12", postal="852 31", email="sundsvall@guiltypleasure.se",
@@ -349,13 +349,13 @@ CITIES = {
     hours_js="{1:[660,1320],2:[660,1320],3:[660,1440],4:[660,1440],5:[660,1500],6:[660,1500],0:[660,1320]}",
     hours_schema=[["Monday","Tuesday","11:00","22:00"],["Wednesday","Thursday","11:00","00:00"],["Friday","Saturday","11:00","01:00"],["Sunday","Sunday","11:00","22:00"]],
     hero_h1="Finger-licking good — mitt i Stenstan",
-    hero_sub="Jag är GP's i Sundsvall. Storgatan 12 — food and drinks, all day, everyday.",
+    hero_sub="Vi är GP's i Sundsvall. Storgatan 12 — food and drinks, all day, everyday.",
   ),
 }
 
 MENU_ROWS = """
       <div class="mc-head"><span class="tagpill">Ur baren</span></div>
-      <details class="mrow"><summary><b>Ghost of Prince</b><span class="sig">signature</span><span class="dots"></span><span class="price">149</span></summary><p>Gin, viol, citron, ingefäraskum &amp; salt. Min stolthet — börja här.</p></details>
+      <details class="mrow"><summary><b>Ghost of Prince</b><span class="sig">signature</span><span class="dots"></span><span class="price">149</span></summary><p>Gin, viol, citron, ingefäraskum &amp; salt. Vår stolthet — börja här.</p></details>
       <details class="mrow"><summary><b>Frozen Blood Orange Mimosa</b><span class="dots"></span><span class="price">119</span></summary><p>Blodapelsinsorbet, fläder &amp; cava. Brunchens bästa vän.</p></details>
       <details class="mrow"><summary><b>Spicy Margarita</b><span class="dots"></span><span class="price">139</span></summary><p>Tequila, jalapeño &amp; lime. Den bits — lagom mycket.</p></details>
       <details class="mrow"><summary><b>Coffee Granita</b><span class="dots"></span><span class="price">139</span></summary><p>Vodka, kaffelikör &amp; espressogranita — välj Original, Salted Caramel eller Kanelbulle.</p></details>
@@ -437,7 +437,7 @@ def footer(base=""):
         <p><a href="{CITIES['sundsvall']["booking"]}" rel="noopener">Boka bord online</a> — eller kom förbi.</p>
       </div>
       <div>
-        <h3>Häng med mig</h3>
+        <h3>Häng med oss</h3>
         <p class="soc"><a href="https://www.instagram.com/guiltypleasure.se/" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@guiltypleasure.se" rel="noopener">TikTok</a><a href="https://www.facebook.com/gpsumea/" rel="noopener">Facebook</a></p>
         <p>Ingen telefon än — maila oss eller skicka DM på Instagram.</p>
       </div>
@@ -565,29 +565,29 @@ def faq_html(qas):
 
 # ---------------- STADSSIDOR ----------------
 UMEA_STORY = """
-<p class="lead">Jag öppnade på Skolgatan 62 år 2021 med en enkel idé: Umeå förtjänade ett ställe där brunchen inte tar slut bara för att klockan gör det.</p>
-<p>Sedan dess har jag varit stans New York-inspirerade comfort bistro — flaggskeppet i Guilty Pleasure-familjen. Hos mig börjar dagen med frozen mimosas och comfort-klassiker, glider över i middag när eftermiddagen tröttnat, och slutar på helgerna i något som bäst beskrivs som disco. Fredagar och lördagar håller jag igång till klockan ett, och ja — det märks.</p>
+<p class="lead">Vi öppnade på Skolgatan 62 år 2021 med en enkel idé: Umeå förtjänade ett ställe där brunchen inte tar slut bara för att klockan gör det.</p>
+<p>Sedan dess har vi varit stans New York-inspirerade comfort bistro — flaggskeppet i Guilty Pleasure-familjen. Hos oss börjar dagen med frozen mimosas och comfort-klassiker, glider över i middag när eftermiddagen tröttnat, och slutar på helgerna i något som bäst beskrivs som disco. Fredagar och lördagar håller vi igång till klockan ett, och ja — det märks.</p>
 <p>Du hittar oss mitt i centrala Umeå, på Skolgatan 62. Kommer du med hunden? Ta med den in. Kommer du med ett stort gäng en lördag? Kom tidigt — vi kör drop-in only, först till kvarn, och det är en princip vi är stolta över: livet är för kort för tomma bord som väntar på folk som inte dyker upp.</p>
-<p>Baren är min scen. Signaturen heter Ghost of Prince — gin, viol, citron, ingefäraskum och salt — och den som inte dricker alkohol får ingen tråkig avbytarbänk: hela min No Regrets-lista är byggd med samma kärlek, från Virgin Prince till alkoholfri Coffee Granita i tre smaker. Kaffet? Självklart. Det är därför det står Café på skylten.</p>
-<p>Umeå är en stad som vaknar sent och lägger sig sent på helgen. Jag är byggd för exakt det.</p>
+<p>Baren är vår scen. Signaturen heter Ghost of Prince — gin, viol, citron, ingefäraskum och salt — och den som inte dricker alkohol får ingen tråkig avbytarbänk: hela vår No Regrets-lista är byggd med samma kärlek, från Virgin Prince till alkoholfri Coffee Granita i tre smaker. Kaffet? Självklart. Det är därför det står Café på skylten.</p>
+<p>Umeå är en stad som vaknar sent och lägger sig sent på helgen. Vi är byggda för exakt det.</p>
 
-<p>Vad menar jag med comfort food? Tänk maten du egentligen längtar efter — generös, het, lite oanständigt god — lagad på riktigt och serverad utan dröjsmål. New York-dinern är förebilden: högt tempo i köket, lågt tempo vid borden. Du ska hinna hit på lunchrasten om du vill, men ingen kommer titta konstigt på dig om du blir kvar till stängning. Det är hela poängen med ordet pleasure i mitt namn — och ordet guilty tar du med en nypa salt. Eller som saltkanten på margaritan.</p>
-<p>Helgerna är min paradgren. Brunchen rullar från öppning — frozen mimosas, kaffe som betyder något och comfort-klassiker tills eftermiddagen ger upp. Sen byter jag skepnad: ljuset sjunker, spellistan vaknar, och den som stannar kvar märker varför tredje akten heter disco. Ingen dresscode, ingen gästlista — bara stämning som stiger med timmarna fram till stängning.</p>
-<p>Jag är en del av Guilty Pleasure-familjen, med en syster i Sundsvall och samma fyra färger i själen: eld, disco, mossa och grädde. Men Umeå är där allt började 2021, och det är här flaggan står. Kom förbi så förstår du.</p>
+<p>Vad menar vi med comfort food? Tänk maten du egentligen längtar efter — generös, het, lite oanständigt god — lagad på riktigt och serverad utan dröjsmål. New York-dinern är förebilden: högt tempo i köket, lågt tempo vid borden. Du ska hinna hit på lunchrasten om du vill, men ingen kommer titta konstigt på dig om du blir kvar till stängning. Det är hela poängen med ordet pleasure i vårt namn — och ordet guilty tar du med en nypa salt. Eller som saltkanten på margaritan.</p>
+<p>Helgerna är vår paradgren. Brunchen rullar från öppning — frozen mimosas, kaffe som betyder något och comfort-klassiker tills eftermiddagen ger upp. Sen byter vi skepnad: ljuset sjunker, spellistan vaknar, och den som stannar kvar märker varför tredje akten heter disco. Ingen dresscode, ingen gästlista — bara stämning som stiger med timmarna fram till stängning.</p>
+<p>Vi är en del av Guilty Pleasure-familjen, med en syster i Sundsvall och samma fyra färger i själen: eld, disco, mossa och grädde. Men Umeå är där allt började 2021, och det är här flaggan står. Kom förbi så förstår du.</p>
 """
 
 SUNDSVALL_STORY = """
-<p class="lead">Mitt i Stenstan, på Storgatan 12, serverar jag finger-licking good food and drinks — all day, everyday.</p>
-<p>Jag är Sundsvalls del av Guilty Pleasure-familjen: samma New York-inspirerade comfort bistro-själ som flaggskeppet i Umeå, men med min egen rytm. Stenstans stenhus och Storgatans puls sätter tonen — hit kommer du för en lång brunch i helgen, en middag som inte har bråttom, eller en fredagskväll som växer till något mer. Fredag och lördag håller jag öppet till klockan ett.</p>
+<p class="lead">Mitt i Stenstan, på Storgatan 12, serverar vi finger-licking good food and drinks — all day, everyday.</p>
+<p>Vi är Sundsvalls del av Guilty Pleasure-familjen: samma New York-inspirerade comfort bistro-själ som flaggskeppet i Umeå, men med vår egen rytm. Stenstans stenhus och Storgatans puls sätter tonen — hit kommer du för en lång brunch i helgen, en middag som inte har bråttom, eller en fredagskväll som växer till något mer. Fredag och lördag håller vi öppet till klockan ett.</p>
 <p>Till skillnad från vår syster i norr tar vi emot bordsbokningar — boka online så står bordet redo när du kommer. Men dörren är lika öppen för dig som bara svänger förbi: drop-in är alltid välkommet, och baren har alltid plats för en till. Hundar? Välkomna, alltid.</p>
 <p>Ur baren händer samma magi som i Umeå: Ghost of Prince är signaturen, Frozen Blood Orange Mimosa äger bruncherna, och hela No Regrets-listan är alkoholfri på riktigt — inte en eftertanke. Menyn byter skepnad med säsongen, så fråga vad som är nytt.</p>
-<p>Sundsvall har alltid vetat hur man har trevligt. Jag är bara stället där det händer.</p>
+<p>Sundsvall har alltid vetat hur man har trevligt. Vi är bara stället där det händer.</p>
 
-<p>Ett praktiskt ord på vägen: helgkvällar är det klokt att boka — Stenstan fylls snabbt och mina bord är populära. Vardagsluncher och eftermiddagar funkar drop-in nästan alltid. Kommer ni som större sällskap, maila mig på sundsvall@guiltypleasure.se så löser vi det tillsammans. Och följ @guiltypleasure.se på Instagram — där droppar nyheterna först, nästan varje dag.</p>
+<p>Ett praktiskt ord på vägen: helgkvällar är det klokt att boka — Stenstan fylls snabbt och våra bord är populära. Vardagsluncher och eftermiddagar funkar drop-in nästan alltid. Kommer ni som större sällskap, maila oss på sundsvall@guiltypleasure.se så löser vi det tillsammans. Och följ @guiltypleasure.se på Instagram — där droppar nyheterna först, nästan varje dag.</p>
 
-<p>Comfort food på mitt vis betyder mat utan krusiduller men med full effekt — New York-diner i själen, Norrland i hjärtat. Kom på lunchen, kom på middagen, kom bara. Tempot i köket är högt så att tempot vid ditt bord kan vara precis så lågt du vill. Och kaffet tar jag på största allvar; det är därför det står Café på skylten.</p>
-<p>Helgerna har tre akter även här. Brunchen öppnar spelet, middagen bygger vidare, och när fredags- och lördagskvällarna närmar sig midnatt har tredje akten — disco — tagit över rummet. Stenstan utanför fönstren har sett det mesta sedan 1800-talet, men jag vågar påstå att den sett få ställen med den här kombinationen av frozen mimosas och discokänsla.</p>
-<p>Jag är Sundsvallsdelen av Guilty Pleasure-familjen — flaggskeppet ligger i Umeå, men själen är densamma: fyra färger, en attityd, och övertygelsen att livet är för kort för trista ställen. Välkommen in.</p>
+<p>Comfort food på vårt vis betyder mat utan krusiduller men med full effekt — New York-diner i själen, Norrland i hjärtat. Kom på lunchen, kom på middagen, kom bara. Tempot i köket är högt så att tempot vid ditt bord kan vara precis så lågt du vill. Och kaffet tar vi på största allvar; det är därför det står Café på skylten.</p>
+<p>Helgerna har tre akter även här. Brunchen öppnar spelet, middagen bygger vidare, och när fredags- och lördagskvällarna närmar sig midnatt har tredje akten — disco — tagit över rummet. Stenstan utanför fönstren har sett det mesta sedan 1800-talet, men vi vågar påstå att den sett få ställen med den här kombinationen av frozen mimosas och discokänsla.</p>
+<p>Vi är Sundsvallsdelen av Guilty Pleasure-familjen — flaggskeppet ligger i Umeå, men själen är densamma: fyra färger, en attityd, och övertygelsen att livet är för kort för trista ställen. Välkommen in.</p>
 """
 
 UMEA_FAQ = [
@@ -636,7 +636,7 @@ def city_page(key):
   </section>
   <div class="marquee" aria-hidden="true"><span>BRUNCH · DINNER · DISCO · BRUNCH · DINNER · DISCO · BRUNCH · DINNER · DISCO · BRUNCH · DINNER · DISCO · </span></div>
   <section class="wrap story">
-    <div class="kicker">Min historia</div>
+    <div class="kicker">Vår historia</div>
     <h2>Det här är <span class="accent">GP's {c['name']}</span></h2>
     {story}
   </section>
@@ -692,7 +692,7 @@ def hub():
     {LOGO}
     <div class="eyebrow">New York-inspirerad comfort bistro · Umeå &amp; Sundsvall</div>
     <h1>Where cravings meet good vibes</h1>
-    <p class="sub">Jag serverar good mood comfort food, snabbt — med en cheeky attityd. Brunch, dinner &amp; disco i två städer. Välj din.</p>
+    <p class="sub">Vi serverar good mood comfort food, snabbt — med en cheeky attityd. Brunch, dinner &amp; disco i två städer. Välj din.</p>
     <div class="cta-row">
       <a class="btn btn-pink" href="umea/index.html">GP's Umeå</a>
       <a class="btn btn-pink" href="sundsvall/index.html">GP's Sundsvall</a>
@@ -706,7 +706,7 @@ def hub():
     <div class="acts">
       <article class="act"><span class="tagpill">Akt 1</span><h3>Brunch</h3><p>Långa förmiddagar, frozen mimosas och comfort-klassiker. Kom hungrig, gå lycklig.</p></article>
       <article class="act"><span class="tagpill">Akt 2</span><h3>Dinner</h3><p>New York-bistro möter norrländsk gästvänlighet. Maten kommer snabbt — sällskapet stannar länge.</p></article>
-      <article class="act"><span class="tagpill">Akt 3</span><h3>Disco</h3><p>När mörkret faller vrider jag upp volymen. Fredagar och lördagar öppet till ett.</p></article>
+      <article class="act"><span class="tagpill">Akt 3</span><h3>Disco</h3><p>När mörkret faller vrider vi upp volymen. Fredagar och lördagar öppet till ett.</p></article>
     </div>
   </section>
   <section class="wrap surf-moss" id="signaturer">
@@ -742,7 +742,7 @@ def hub():
     <div class="kicker">Nästan dagligen i flödet</div>
     <h2>Följ <span class="accent">@guiltypleasure.se</span></h2>
     <p>Dagens rätt, nya drinkar och allt som händer efter mörkrets inbrott — det droppar först på Instagram.</p>
-    <a class="btn btn-pink" href="https://www.instagram.com/guiltypleasure.se/" rel="noopener">Följ mig på Instagram</a>
+    <a class="btn btn-pink" href="https://www.instagram.com/guiltypleasure.se/" rel="noopener">Följ oss på Instagram</a>
   </section>
 </main>
 """ + footer("")
