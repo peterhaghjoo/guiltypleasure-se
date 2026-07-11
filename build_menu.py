@@ -158,6 +158,12 @@ def section_cards(data):
     return "\n".join(cards)
 
 def main():
+    # Day & Night Deal-kortet: eldram på KORTET, disco-text i PILLEN — aldrig två
+    # starka färger i samma element (brandregeln, CLAUDE.md). Fram till 2026-07-11
+    # stod var(--night)/var(--pink)/var(--flame) här — tokens från före design-
+    # portningen som aldrig funnits i :root, så kortet renderade OSTYLAT. Riktiga
+    # tokens nu: --fire på grädde (3,25:1 >= 3,0 UI-krav) och --disco på --moss
+    # (8,20:1 >= 4,5) — båda paren bevakas redan av QA_REQUIRED i build.py.
     url="https://www.guiltypleasure.se/meny/"
     title="Meny — GP's Guilty Pleasure Café | Mat, cocktails, vin & öl"
     desc="Hela GP's sommarmeny 2026: comfort food, pizza, cocktails, No Regrets 0.0 %, vinlista och öl. Samma meny hela dagen — brunch, dinner & disco."
@@ -186,8 +192,8 @@ def main():
     <div class="kicker">Sida 1</div>
     <h2>Maten <span class="accent">— drypande god</span></h2>
     {section_cards(MAT)}
-    <div class="menucard" style="max-width:none;border-color:var(--flame)">
-      <div class="mc-head"><span class="tagpill" style="background:var(--night);color:var(--pink);border:1.5px solid var(--flame)">Day &amp; Night Deal</span></div>
+    <div class="menucard" style="max-width:none;border-color:var(--fire)">
+      <div class="mc-head"><span class="tagpill" style="background:var(--moss);color:var(--disco)">Day &amp; Night Deal</span></div>
       <details class="mrow"><summary><b>1 Small Plate + 1 Big Plate</b><span class="dots"></span><span class="price">299</span></summary><p>Gäller hela dagen, hela kvällen. Lobster +50 · Steak +100.</p></details>
     </div>
   </section>

@@ -183,6 +183,9 @@ def en_footer():
       .replace("· karta</a>","· map</a>").replace('>karta<','>map<'))
 
 def main():
+    # Day & Night Deal-kortet: samma tokenfix som svenska menysidan (se
+    # build_menu.py) — riktiga tokens --fire/--moss/--disco, aldrig två starka
+    # färger i samma element. Speglar SV-sidan exakt.
     url="https://www.guiltypleasure.se/en/meny/"
     title="Menu — GP's Guilty Pleasure Café | Food, cocktails, wine & beer"
     desc="GP's full summer menu 2026: comfort food, pizza, cocktails, the zero-proof No Regrets list, wine and beer. Same menu all day — brunch, dinner & disco."
@@ -211,8 +214,8 @@ def main():
     <div class="kicker">Page 1</div>
     <h2>The food <span class="accent">— dripping good</span></h2>
     {section_cards(MAT_EN)}
-    <div class="menucard" style="max-width:none;border-color:var(--flame)">
-      <div class="mc-head"><span class="tagpill" style="background:var(--night);color:var(--pink);border:1.5px solid var(--flame)">Day &amp; Night Deal</span></div>
+    <div class="menucard" style="max-width:none;border-color:var(--fire)">
+      <div class="mc-head"><span class="tagpill" style="background:var(--moss);color:var(--disco)">Day &amp; Night Deal</span></div>
       <details class="mrow"><summary><b>1 Small Plate + 1 Big Plate</b><span class="dots"></span><span class="price">299</span></summary><p>Valid all day, all night. Lobster +50 · Steak +100.</p></details>
     </div>
   </section>

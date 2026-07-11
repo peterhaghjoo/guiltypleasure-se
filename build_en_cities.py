@@ -100,7 +100,9 @@ def city_page_en(key):
     booking_row = (f'<a class="btn btn-pink" href="{c["booking"]}" rel="noopener">Book a table</a>' if c["booking"] else "")
     policy = ("Walk-ins only — come as you are." if key=="umea"
               else "Book online or drop by — both work just as well.")
-    menu_rows = MENU_EN.replace('href="../meny/index.html"','href="../../meny/index.html"')
+    # MENU_EN:s meny-fot är skriven för hubbens djup (/en/ -> meny/index.html).
+    # Härifrån (/en/<stad>/) är den engelska menyn ../meny/index.html.
+    menu_rows = MENU_EN.replace('href="meny/index.html"','href="../meny/index.html"')
     html = head(title,desc,f"/en/{key}/",lang="en",extra_schema=schema,fontpath="../../fonts/",og=f"og-{key}.png") + en_topbar() + f"""
 <main id="top">
   <div class="wrap crumbs"><a href="../index.html">GP's</a> / {c['name']}</div>
@@ -188,10 +190,11 @@ for key in ("umea","sundsvall"):
     for b in blocks: json.loads(b)
     words=len(re.sub(r'<[^>]+>',' ', (UMEA_STORY_EN if key=="umea" else SUNDSVALL_STORY_EN)).split())
     assert 'lang="en"' in s and "tel:" not in s and "hreflang" in s and "Öppet nu" not in s
-    # Nav-länken "Menu" ska gå till ENGELSKA menyn (/en/meny/)
+    # Nav-länken "Menu" OCH meny-foten ("See the full menu") ska gå till /en/meny/
     assert '<a href="../meny/index.html">Menu</a>' in s, "nav ska peka på /en/meny/"
-    # mc-foot ("See the full menu") pekar fortfarande på svenska menyn — medveten kvarleva
-    assert '../../meny/index.html' in s and 'stickycta' in s
+    assert 'href="../meny/index.html">See the full menu' in s, "meny-foten ska peka på /en/meny/"
+    assert '../../meny/index.html' not in s, "ingen länk till svenska menyn ska ligga kvar på EN-stadssidorna"
+    assert 'stickycta' in s
     assert words>=350, f"story {key}: {words} ord"
     sv=(ROOT/f"{key}/index.html").read_text(encoding="utf-8")
     assert f'hreflang="en" href="https://www.guiltypleasure.se/en/{key}/"' in sv
