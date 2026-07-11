@@ -20,6 +20,12 @@ ROOT = pathlib.Path(__file__).parent
 # ============================================================================
 PRELAUNCH = True
 
+# Robots-direktiv. Snippet-/preview-direktiven är kvar även under förlansering —
+# de kostar inget och är redan rätt den dag PRELAUNCH slås av. Det enda som
+# ändras vid cutover är index/noindex.
+ROBOTS_META = ("noindex, nofollow" if PRELAUNCH else "index, follow") + \
+              ", max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+
 FONT_B64 = base64.b64encode((ROOT/"fonts/gp-bold.woff2").read_bytes()).decode()
 LOGO = (ROOT/"logo.inline.svg").read_text(encoding="utf-8")
 
@@ -171,7 +177,7 @@ CITIES = {
     name="Sundsvall", street="Storgatan 12", postal="852 31", email="sundsvall@guiltypleasure.se",
     maps="https://maps.google.com/?q=Guilty+Pleasure+Caf%C3%A9+Storgatan+12+Sundsvall",
     reviews="https://www.google.com/search?q=Guilty+Pleasure+Caf%C3%A9+Sundsvall+recensioner",
-    region="Västernorrlands län", booking="https://app.bokabord.se",
+    region="Västernorrlands län", booking="https://www.bokabord.se/restaurang/guilty-pleasure-cafe-sundsvall",
     hours_txt=[("Måndag","11–22"),("Tisdag","11–22"),("Onsdag","11–00"),("Torsdag","11–00"),("Fredag","11–01"),("Lördag","11–01"),("Söndag","11–22")],
     hours_js="{1:[660,1320],2:[660,1320],3:[660,1440],4:[660,1440],5:[660,1500],6:[660,1500],0:[660,1320]}",
     hours_schema=[["Monday","Tuesday","11:00","22:00"],["Wednesday","Thursday","11:00","00:00"],["Friday","Saturday","11:00","01:00"],["Sunday","Sunday","11:00","22:00"]],
@@ -198,12 +204,13 @@ def head(title, desc, canon_path, lang="sv", extra_schema="", fontpath="fonts/",
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-{'<meta name="robots" content="noindex, nofollow">' if PRELAUNCH else ''}
+<meta name="robots" content="{ROBOTS_META}">
 <title>{title}</title>
 <meta name="description" content="{desc}">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
 <meta property="og:type" content="restaurant">
+<meta property="og:site_name" content="GP's — Guilty Pleasure Café">
 <meta property="og:locale" content="{'sv_SE' if lang=='sv' else 'en_GB'}">
 <meta property="og:image" content="https://www.guiltypleasure.se/{og}">
 <meta property="og:image:width" content="1200">
@@ -260,7 +267,7 @@ def footer(base=""):
         <h3>GP's Sundsvall</h3>
         <p>Storgatan 12 · <a href="{CITIES['sundsvall']['maps']}" rel="noopener">karta</a></p>
         <p><a href="mailto:sundsvall@guiltypleasure.se">sundsvall@guiltypleasure.se</a></p>
-        <p><a href="https://app.bokabord.se" rel="noopener">Boka bord online</a> — eller kom förbi.</p>
+        <p><a href="{CITIES['sundsvall']["booking"]}" rel="noopener">Boka bord online</a> — eller kom förbi.</p>
       </div>
       <div>
         <h3>Häng med mig</h3>
@@ -313,17 +320,37 @@ def day_range(d1, d2):
     i, j = WEEK.index(d1), WEEK.index(d2)
     return WEEK[i:j+1] if i <= j else WEEK[i:] + WEEK[:j+1]
 
-def rest_schema(city_key, page_url):
+# Multi-typad entitet. NightClub är MEDVETET bortvald: GP's kör klubbkvällar men
+# har inget dansgolv (bekräftat av Peter 2026-07-11), och NightClub vore ett
+# påstående om en verksamhet som inte finns. Tagg-researchen föreslog den — vi
+# avviker med flit. Se BACKLOG 1.4.
+GP_TYPES = ["Restaurant", "CafeOrCoffeeShop", "BarOrPub"]
+
+# amenityFeature — bara det sajten faktiskt påstår.
+# Hundvänligt: står i FAQ:n ("hundar är alltid välkomna").
+# Veganskt: bekräftat av Peter 2026-07-11 (alltid minst ett veganskt alternativ).
+# Dansgolv: INTE uppmärkt — finns inte.
+AMENITIES = {
+  "sv": [("Hundvänligt", True), ("Veganska alternativ", True), ("Alkoholfria cocktails", True)],
+  "en": [("Dog friendly", True), ("Vegan options", True), ("Zero-proof cocktails", True)],
+}
+CUISINE = {
+  "sv": ["Comfort food", "Amerikanskt", "Brunch", "Cocktails"],
+  "en": ["Comfort food", "American", "Brunch", "Cocktails"],
+}
+
+def rest_schema(city_key, page_url, lang="sv"):
     c = CITIES[city_key]
     node = {
-      "@context":"https://schema.org","@type":"Restaurant",
+      "@context":"https://schema.org","@type":GP_TYPES,
       "@id":f"https://www.guiltypleasure.se/{city_key}/#restaurant",
       "name":f"GP's — Guilty Pleasure Café {c['name']}",
-      "servesCuisine":["Comfort food","Brunch","Cocktails"],
+      "servesCuisine":CUISINE[lang],
       "priceRange":"$$",
       "address":{"@type":"PostalAddress","streetAddress":c["street"],"postalCode":c["postal"],"addressLocality":c["name"],"addressRegion":c["region"],"addressCountry":"SE"},
       "email":c["email"],"url":f"https://www.guiltypleasure.se/{city_key}/",
-      "acceptsReservations": (c["booking"] if c["booking"] else "False"),
+      "acceptsReservations": (c["booking"] if c["booking"] else False),
+      "amenityFeature":[{"@type":"LocationFeatureSpecification","name":n,"value":v} for n,v in AMENITIES[lang]],
       "hasMap":c["maps"],
       "sameAs":["https://www.instagram.com/guiltypleasure.se/","https://www.facebook.com/gpsumea/","https://www.tiktok.com/@guiltypleasure.se"],
       "hasMenu":{"@type":"Menu","name":"Signaturer ur baren","hasMenuSection":[{"@type":"MenuSection","name":"Cocktails","hasMenuItem":[
@@ -333,6 +360,31 @@ def rest_schema(city_key, page_url):
           {"@type":"MenuItem","name":"Virgin Prince 0.0","description":"Alkoholfri signatur — viol, citron, ingefäraskum & salt","offers":{"@type":"Offer","price":"79","priceCurrency":"SEK"}}]}]},
       "openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":day_range(d1,d2),"opens":o,"closes":cl} for d1,d2,o,cl in c["hours_schema"]],
     }
+    # ReserveAction endast där bokning faktiskt finns. Umeå är drop-in only —
+    # där säger acceptsReservations: false, och ingen ReserveAction sätts.
+    if c["booking"]:
+        node["potentialAction"] = {
+          "@type":"ReserveAction",
+          "target":{"@type":"EntryPoint","urlTemplate":c["booking"],
+                    "inLanguage":"sv-SE" if lang=="sv" else "en-GB",
+                    "actionPlatform":["https://schema.org/DesktopWebPlatform","https://schema.org/MobileWebPlatform"]},
+          "result":{"@type":"FoodEstablishmentReservation","name":f"Boka bord på GP's {c['name']}" if lang=="sv" else f"Book a table at GP's {c['name']}"},
+        }
+    return '<script type="application/ld+json">'+json.dumps(node,ensure_ascii=False)+'</script>'
+
+def breadcrumbs(trail, url):
+    """BreadcrumbList. trail = [(namn, absolut URL), ...] från Hem och nedåt."""
+    node={"@context":"https://schema.org","@type":"BreadcrumbList","@id":url+"#breadcrumbs",
+      "itemListElement":[{"@type":"ListItem","position":i+1,"name":n,"item":u} for i,(n,u) in enumerate(trail)]}
+    return '<script type="application/ld+json">'+json.dumps(node,ensure_ascii=False)+'</script>'
+
+def website_schema(lang="sv"):
+    """WebSite-entiteten — bara på hubbarna, en per språk."""
+    home = "https://www.guiltypleasure.se/" + ("" if lang=="sv" else "en/")
+    node={"@context":"https://schema.org","@type":"WebSite","@id":home+"#website",
+      "url":home,"name":"GP's — Guilty Pleasure Café",
+      "inLanguage":"sv-SE" if lang=="sv" else "en-GB",
+      "publisher":{"@id":"https://www.guiltypleasure.se/#org"}}
     return '<script type="application/ld+json">'+json.dumps(node,ensure_ascii=False)+'</script>'
 
 def faq_schema(qas, url):
@@ -396,7 +448,9 @@ def city_page(key):
     title = f"Restaurang & bar i {c['name']} — GP's Guilty Pleasure Café, {c['street']}"
     desc = (f"New York-inspirerad comfort bistro på {c['street']}, {c['name']}. Brunch, dinner & disco. "
             + ("Drop-in only, hundar välkomna. Öppet till 01 fre–lör." if key=="umea" else "Boka bord online eller kom förbi — hundar välkomna. Öppet till 01 fre–lör."))
-    schema = rest_schema(key,url) + "\n" + faq_schema(faqs,url)
+    crumbs = breadcrumbs([("Hem","https://www.guiltypleasure.se/"),
+                          (c["name"], url)], url)
+    schema = rest_schema(key,url) + "\n" + faq_schema(faqs,url) + "\n" + crumbs
     cta = (f'<a class="btn btn-fire stickycta" href="{c["booking"]}" rel="noopener">Boka bord</a>' if c["booking"]
            else f'<a class="btn btn-fire stickycta" href="{c["maps"]}" rel="noopener">Hitta hit</a>')
     booking_row = (f'<a class="btn btn-pink" href="{c["booking"]}" rel="noopener">Boka bord</a>' if c["booking"] else "")
@@ -457,7 +511,8 @@ def hub():
       "name":"Guilty Pleasure Café","url":url,
       "sameAs":["https://www.instagram.com/guiltypleasure.se/","https://www.facebook.com/gpsumea/","https://www.tiktok.com/@guiltypleasure.se"],
       "subOrganization":[{"@type":"Restaurant","@id":"https://www.guiltypleasure.se/umea/#restaurant"},{"@type":"Restaurant","@id":"https://www.guiltypleasure.se/sundsvall/#restaurant"}]}
-    schema='<script type="application/ld+json">'+json.dumps(org,ensure_ascii=False)+'</script>'
+    schema=('<script type="application/ld+json">'+json.dumps(org,ensure_ascii=False)+'</script>'
+            + "\n" + website_schema("sv"))
     html = head(title,desc,"/",extra_schema=schema,fontpath="fonts/") + topbar("") + f"""
 <main id="top">
   <section class="hero wrap">
@@ -500,7 +555,7 @@ def hub():
         <h3>Sundsvall <span class="cstatus" data-city="sundsvall" aria-live="polite">…</span></h3>
         <p>Mitt i Stenstan på Storgatan 12. Finger-licking good — all day, everyday. Boka bord eller kom förbi.</p>
         {hours_table("sundsvall")}
-        <div class="cta-row" style="justify-content:flex-start"><a class="btn btn-pink" href="sundsvall/index.html">Till Sundsvall-sidan</a><a class="btn btn-fire" href="https://app.bokabord.se" rel="noopener">Boka bord</a></div>
+        <div class="cta-row" style="justify-content:flex-start"><a class="btn btn-pink" href="sundsvall/index.html">Till Sundsvall-sidan</a><a class="btn btn-fire" href="{CITIES['sundsvall']["booking"]}" rel="noopener">Boka bord</a></div>
       </div>
     </div>
   </section>
@@ -541,12 +596,52 @@ Allow: /
 Sitemap: https://www.guiltypleasure.se/sitemap.xml
 """
 
+# ---------------- llms.txt ----------------
+# Faktabaserad sammanfattning för AI-assistenter. Inga superlativ, inga
+# marknadsföringspåståenden — bara verifierbara uppgifter ur NAP-källan
+# (docs/website-rebuild-design.md §5). Uppdatera när fakta ändras.
+LLMS = f"""# GP's — Guilty Pleasure Café
+
+New York-inspirerad comfort bistro med två restauranger i norra Sverige:
+Umeå och Sundsvall. Serverar brunch, à la carte, cocktails och alkoholfria
+drinkar. Samma meny hela dagen. Hundar är välkomna på båda ställena.
+Ägare: Guilty Pleasure Group AB.
+
+## Umeå
+- Adress: {CITIES['umea']['street']}, {CITIES['umea']['postal']} Umeå
+- Öppettider: måndag 11.30–22, tisdag–torsdag 11.30–00, fredag–lördag 11.30–01, söndag 11.30–22
+- Bokning: ingen bordsbokning — drop-in only
+- E-post: {CITIES['umea']['email']}
+- Öppnade 2021
+
+## Sundsvall
+- Adress: {CITIES['sundsvall']['street']}, {CITIES['sundsvall']['postal']} Sundsvall
+- Öppettider: måndag–tisdag 11–22, onsdag–torsdag 11–00, fredag–lördag 11–01, söndag 11–22
+- Bokning: {CITIES['sundsvall']['booking']}
+- E-post: {CITIES['sundsvall']['email']}
+
+## Sidor
+- Startsida: https://www.guiltypleasure.se/
+- Umeå: https://www.guiltypleasure.se/umea/
+- Sundsvall: https://www.guiltypleasure.se/sundsvall/
+- Meny (mat, cocktails, vin, öl, priser): https://www.guiltypleasure.se/meny/
+- English: https://www.guiltypleasure.se/en/
+
+## Att veta
+- Telefonnummer saknas i skrivande stund. Kontakt sker via e-post eller
+  Instagram (@guiltypleasure.se).
+- Priser i menyn anges i svenska kronor.
+- Alkoholfria cocktails finns på hela No Regrets-listan.
+- Frågor om allergier och specialkost besvaras på plats.
+"""
+
 # ---------------- BYGG + VERIFIERA ----------------
 if __name__ == "__main__":
     (ROOT/"umea").mkdir(exist_ok=True); (ROOT/"sundsvall").mkdir(exist_ok=True)
     pages = {"index.html":hub(),"umea/index.html":city_page("umea"),"sundsvall/index.html":city_page("sundsvall")}
     for p,contents in pages.items(): (ROOT/p).write_text(contents, encoding="utf-8")
     (ROOT/"sitemap.xml").write_text(SITEMAP, encoding="utf-8"); (ROOT/"robots.txt").write_text(ROBOTS, encoding="utf-8")
+    (ROOT/"llms.txt").write_text(LLMS, encoding="utf-8")
 
     # 404 — Cloudflare Pages serverar 404.html automatiskt (tvåspråkig, noindex)
     nf = head("Sidan finns inte — GP's Guilty Pleasure Café","Oops — den här sidan finns inte. Men menyn gör det.","/404.html") + topbar("") + """
@@ -563,10 +658,11 @@ if __name__ == "__main__":
   </section>
 </main>
 """ + footer("")
-    # 404 ska aldrig indexeras och ska inte ha canonical. Under PRELAUNCH sätter
-    # head() redan noindex på alla sidor — undvik då en dubblerad robots-tagg.
-    nf = fix_amps(nf.replace('<link rel="canonical" href="https://www.guiltypleasure.se/404.html">',
-                             '' if PRELAUNCH else '<meta name="robots" content="noindex">'))
+    # 404 ska ALDRIG indexeras — inte ens efter cutover — och ska inte ha canonical.
+    # head() sätter samma robots-tagg på alla sidor; här skrivs den över med noindex.
+    nf = nf.replace(f'<meta name="robots" content="{ROBOTS_META}">',
+                    '<meta name="robots" content="noindex, nofollow">')
+    nf = fix_amps(nf.replace('<link rel="canonical" href="https://www.guiltypleasure.se/404.html">', ''))
     # 404 serveras på godtyckligt URL-djup -> absoluta stigar
     for a,b in (('href="index.html','href="/index.html'),('href="umea/index.html"','href="/umea/"'),
                 ('href="sundsvall/index.html"','href="/sundsvall/"'),('url("fonts/','url("/fonts/'),

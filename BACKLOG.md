@@ -18,15 +18,12 @@
       **16 av 33 gamla URL:er i redirect-kartan skulle idag landa på 404.**
       Detaljer inarbetade i 1.1b och 1.2–1.4 nedan.
 
-- [ ] **1.1b ÖPPETTIDSBUGG I SCHEMA — ligger LIVE, fixa först.**
-      `build.py:305` expanderar dagsintervall till bara ändpunkterna:
-      `"dayOfWeek": ([d1] if d1==d2 else [d1,d2])`.
-      Umeås `["Tuesday","Thursday"]` blir därmed **tisdag + torsdag** —
-      **onsdag försvinner ur schemat**. Google och AI-assistenter läser
-      Umeå som STÄNGT på onsdagar. Den synliga öppettidstabellen är korrekt;
-      bara `openingHoursSpecification` är fel. Sundsvall råkar klara sig
-      (bara intervall om två dagar). Fix: expandera intervallet över alla
-      dagar i spannet. Verifiera båda orterna mot §5 efteråt.
+- [x] **1.1b ÖPPETTIDSBUGG I SCHEMA.** KLAR 2026-07-11 (PR #1, `aa520ee`).
+      `openingHoursSpecification` expanderade dagsintervall till bara
+      ändpunkterna, så Umeås `Tuesday–Thursday` blev `["Tuesday","Thursday"]`
+      och **onsdagen försvann** — Google läste Umeå som stängt på onsdagar.
+      `day_range()` fyller nu hela spannet. Verifierat: båda orter 7/7 dagar
+      mot NAP-källan (§5).
 
 - [ ] **1.2 Intentionssidor per stad** — SAKNAS HELT (10 sidor).
       SV: `/umea/brunch/`, `/umea/lunch/`, `/umea/after-work/` +
@@ -45,30 +42,43 @@
       idag länkar engelska hubben till den SVENSKA menysidan, vilket
       bryter språkregeln i CLAUDE.md. `/meny/` saknar dessutom hreflang helt.
 
-- [ ] **1.4 Schema & taggar** — verifierat mot genererad HTML 2026-07-11.
-      FINNS: FAQPage, openingHoursSpecification (men se 1.1b), servesCuisine,
-      priceRange `$$`, hasMenu + Menu/MenuItem med priser, Organization,
-      sameAs, acceptsReservations, og:locale, korrekt hreflang på 6 av 7 sidor.
-      SAKNAS:
-      - Multi-typning `["Restaurant","CafeOrCoffeeShop","BarOrPub","NightClub"]`
-        (tagg-researchens främsta konkurrensfördel — ingen i Sverige har den)
-      - `amenityFeature` (hundvänligt / veganskt / dansgolv)
-      - `ReserveAction` + riktig boknings-URL. Idag pekar Sundsvalls
-        `acceptsReservations` på generiska `https://app.bokabord.se` i stället
-        för `bokabord.se/restaurang/guilty-pleasure-cafe-sundsvall`
-      - `BreadcrumbList` (IA:n kräver brödsmulor)
-      - `WebSite`-entitet, `og:site_name`
-      - `robots`-direktiv (max-snippet / max-image-preview / max-video-preview)
-        — sidorna saknar `<meta name="robots">` helt
-      - `suitableForDiet` + allergener på MenuItem
-      - `llms.txt` — finns inte i `public/` (tagg-researchen påstår att den
-        finns; det gällde Astro-spåret)
-      - `servesCuisine` är på engelska ("Comfort food") på svenska sidor
+- [x] **1.4 Schema & taggar.** KLAR 2026-07-11.
+      Multi-typning `["Restaurant","CafeOrCoffeeShop","BarOrPub"]`,
+      `amenityFeature`, `ReserveAction` + riktig boknings-URL,
+      `BreadcrumbList` på alla undersidor, `WebSite`-entitet, `og:site_name`,
+      robots-direktiv (max-snippet:-1, max-image-preview:large,
+      max-video-preview:-1), `llms.txt`, svensk `servesCuisine`.
+      18 JSON-LD-block validerade, 0 trasiga.
+
+      **Två medvetna avvikelser från tagg-researchen — båda på Peters besked
+      2026-07-11:**
+      - **`NightClub` INTE med i multi-typningen** och **inget `dansgolv` i
+        `amenityFeature`.** GP's kör klubbkvällar men har inget dansgolv.
+        Researchen föreslog `NightClub`; att märka upp den vore ett påstående
+        om en verksamhet som inte finns.
+      - **`suitableForDiet` INTE uppmärkt** — se 2.1. Underlaget håller inte.
+
+      `amenityFeature` innehåller bara det som är sant och belagt:
+      hundvänligt (står i FAQ:n), veganska alternativ (Peter bekräftade att
+      det alltid finns minst ett), alkoholfria cocktails (No Regrets-listan).
 
 ## FAS 2 — Innehållsskuld (kräver Peter)
 
-- [ ] **2.1 Menypriser verifieras** mot originalmenyer — docs/menu-content.md
-      är märkt overifierad. PETER: stäm av priserna.
+- [ ] **2.1 Menyn verifieras — BLOCKERAR `suitableForDiet` i schemat.**
+      Två menykällor säger emot varandra:
+      - `build_menu.py` (levande sajten, "GP_Menu_Copy_Final_2026-07-06") har
+        **noll dietmärkningar** — taggfältet används bara till "signature".
+      - `docs/menu-content.md` har V-märkningar, men är en **äldre, annan**
+        rekonstruktion: andra priser (Löjromspizza 269 vs 289), andra namn
+        (Truffle Pasta 2.0 vs Truffle Mafaldine).
+
+      Och dess V-märkningar är **bevisligen fel**: **Löjromspizza är märkt
+      `(V)`** trots löjrom och smetana. Att skriva in det i schemat vore ett
+      falskt veganpåstående i strukturerad data — något en gäst kan förlita
+      sig på. Därför är `suitableForDiet` medvetet INTE uppmärkt (BACKLOG 1.4).
+
+      PETER: stäm av priser OCH vilka rätter som faktiskt är veganska/
+      vegetariska, samt allergener. Då kan `suitableForDiet` läggas till.
 - [ ] **2.2 Telefonnummer** per enhet — PETER: leverera när de finns;
       sajten är byggd telephone-ready.
 - [ ] **2.3 Riktig fotografering** (hero, mat, interiör) — PETER: beställ/

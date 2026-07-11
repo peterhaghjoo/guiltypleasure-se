@@ -21,7 +21,7 @@ python3 og_gen_ci.py
 echo "== 4/4 Paketerar public/ =="
 rm -rf public
 mkdir -p public/fonts
-cp index.html 404.html sitemap.xml robots.txt favicon.svg apple-touch-icon.png og.png og-umea.png og-sundsvall.png og-meny.png public/
+cp index.html 404.html sitemap.xml robots.txt llms.txt favicon.svg apple-touch-icon.png og.png og-umea.png og-sundsvall.png og-meny.png public/
 cp -r umea sundsvall en meny public/
 cp fonts/pp-medium.woff2 fonts/pp-bold.woff2 public/fonts/
 echo "KLART:"

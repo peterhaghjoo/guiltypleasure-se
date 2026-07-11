@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Menysidan — hela sommarmenyn 2026 ur GP_Menu_Copy_Final. Körs efter build.py."""
 import json, re, pathlib
-from build import head, topbar, footer, CITIES
+from build import head, topbar, footer, CITIES, breadcrumbs
 
 ROOT = pathlib.Path(__file__).parent
 (ROOT/"meny").mkdir(exist_ok=True)
@@ -168,7 +168,8 @@ menu_schema = {"@context":"https://schema.org","@type":"Menu","@id":url+"#menu",
         {"@type":"MenuItem","name":n,"description":d,"offers":{"@type":"Offer","price":p.split(" / ")[0],"priceCurrency":"SEK"}}
         for n,p,d,_ in items]}
     for sek,items in (MAT+BAR)]}
-schema='<script type="application/ld+json">'+json.dumps(menu_schema,ensure_ascii=False)+'</script>'
+schema=('<script type="application/ld+json">'+json.dumps(menu_schema,ensure_ascii=False)+'</script>'
+        + "\n" + breadcrumbs([("Hem","https://www.guiltypleasure.se/"),("Meny",url)], url))
 
 html = head(title,desc,"/meny/",extra_schema=schema,fontpath="../fonts/",og="og-meny.png") + topbar("../") + f"""
 <main id="top">
