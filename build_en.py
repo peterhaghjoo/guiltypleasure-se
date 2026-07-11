@@ -7,7 +7,7 @@ from build import head, topbar, footer, status_js, hours_table, CITIES, LOGO, ME
 ROOT = pathlib.Path(__file__).parent
 (ROOT/"en").mkdir(exist_ok=True)
 
-MENU_EN = MENU_ROWS.replace("Ur baren","From the bar").replace("Min stolthet — börja här.","My pride and joy — start here.")\
+MENU_EN = MENU_ROWS.replace("Ur baren","From the bar").replace("Vår stolthet — börja här.","Our pride and joy — start here.")\
  .replace("Blodapelsinsorbet, fläder &amp; cava. Brunchens bästa vän.","Blood orange sorbet, elderflower &amp; cava. Brunch's best friend.")\
  .replace("Tequila, jalapeño &amp; lime. Den bits — lagom mycket.","Tequila, jalapeño &amp; lime. It bites — just enough.")\
  .replace("Vodka, kaffelikör &amp; espressogranita — välj Original, Salted Caramel eller Kanelbulle.","Vodka, coffee liqueur &amp; espresso granita — Original, Salted Caramel or Cinnamon Bun.")\
@@ -46,7 +46,7 @@ def hub_en():
     {LOGO}
     <div class="eyebrow">New York-inspired comfort bistro · Umeå &amp; Sundsvall, Sweden</div>
     <h1>Where cravings meet good vibes</h1>
-    <p class="sub">I serve good mood comfort food, fast — with a cheeky attitude. Brunch, dinner &amp; disco in two cities up north. Life's too short for empty tables.</p>
+    <p class="sub">We serve good mood comfort food, fast — with a cheeky attitude. Brunch, dinner &amp; disco in two cities up north. Life's too short for empty tables.</p>
     <div class="cta-row">
       <a class="btn btn-pink" href="../umea/index.html">GP's Umeå</a>
       <a class="btn btn-pink" href="../sundsvall/index.html">GP's Sundsvall</a>
@@ -59,7 +59,7 @@ def hub_en():
     <div class="acts">
       <article class="act"><span class="tagpill">Act 1</span><h3>Brunch</h3><p>Long mornings, frozen mimosas and comfort classics. Arrive hungry, leave happy.</p></article>
       <article class="act"><span class="tagpill">Act 2</span><h3>Dinner</h3><p>New York bistro meets northern Swedish hospitality. Food comes fast — company stays late.</p></article>
-      <article class="act"><span class="tagpill">Act 3</span><h3>Disco</h3><p>When darkness falls, I turn it up. Fridays and Saturdays open till 1 am.</p></article>
+      <article class="act"><span class="tagpill">Act 3</span><h3>Disco</h3><p>When darkness falls, we turn it up. Fridays and Saturdays open till 1 am.</p></article>
     </div>
   </section>
   <section class="wrap surf-moss" id="signaturer">
@@ -98,7 +98,7 @@ def hub_en():
     <a class="btn btn-pink" href="https://www.instagram.com/guiltypleasure.se/" rel="noopener">Follow on Instagram</a>
   </section>
 </main>
-""" + footer("../").replace("Häng med mig","Follow along").replace("Ingen telefon än — maila oss eller skicka DM på Instagram.","No phone yet — email us or send a DM on Instagram.").replace("Drop-in only — bara kom in.","Walk-ins only — just come in.").replace("Boka bord online</a> — eller kom förbi.","Book a table online</a> — or drop by.").replace("· karta</a>","· map</a>").replace('>karta<','>map<')
+""" + footer("../").replace("Häng med oss","Follow along").replace("Ingen telefon än — maila oss eller skicka DM på Instagram.","No phone yet — email us or send a DM on Instagram.").replace("Drop-in only — bara kom in.","Walk-ins only — just come in.").replace("Boka bord online</a> — eller kom förbi.","Book a table online</a> — or drop by.").replace("· karta</a>","· map</a>").replace('>karta<','>map<')
     html = h + body
     html = html.replace("</body>", en_status('{"umea":'+CITIES["umea"]["hours_js"]+',"sundsvall":'+CITIES["sundsvall"]["hours_js"]+"}") + "\n</body>")
     return fix_amps(html)

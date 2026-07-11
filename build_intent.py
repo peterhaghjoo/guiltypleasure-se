@@ -145,7 +145,7 @@ def build():
   <section class="hero wrap" style="padding-top:34px;padding-bottom:20px">
     <div class="eyebrow">Brunch i Umeå · Lördag &amp; söndag från 11.30 · Skolgatan 62</div>
     <h1>Brunchen tar inte slut bara för att klockan gör det</h1>
-    <p class="sub">Helgerna är min paradgren. Inga sittningar, ingen buffé, ingen stress — du beställer det du vill ha, när du vill ha det, och stannar så länge sällskapet är kul.</p>
+    <p class="sub">Helgerna är vår paradgren. Inga sittningar, ingen buffé, ingen stress — du beställer det du vill ha, när du vill ha det, och stannar så länge sällskapet är kul.</p>
     <div class="cta-row">
       <a class="btn btn-pink" href="#brunchmenyn">Brunchmenyn</a>
       <a class="btn btn-line" href="{c['maps']}" rel="noopener">Vägbeskrivning</a>
@@ -155,8 +155,8 @@ def build():
 
   <section class="wrap">
     <div class="kicker">Så funkar det</div>
-    <h2>Brunch <span class="accent">på mitt sätt</span></h2>
-    <p class="sub" style="margin:0 0 18px;max-width:62ch">Jag öppnade på Skolgatan 62 år 2021 med en enkel idé: Umeå förtjänade ett ställe där brunchen inte tar slut bara för att klockan gör det. Ingen buffé där maten stått framme sedan tio. Ingen sittning som slutar när du precis kommit igång. Du får din tallrik lagad när du beställer den, och kaffet har fri påtår så länge du sitter kvar.</p>
+    <h2>Brunch <span class="accent">på vårt sätt</span></h2>
+    <p class="sub" style="margin:0 0 18px;max-width:62ch">Vi öppnade på Skolgatan 62 år 2021 med en enkel idé: Umeå förtjänade ett ställe där brunchen inte tar slut bara för att klockan gör det. Ingen buffé där maten stått framme sedan tio. Ingen sittning som slutar när du precis kommit igång. Du får din tallrik lagad när du beställer den, och kaffet har fri påtår så länge du sitter kvar.</p>
     <p class="sub" style="margin:0 0 18px;max-width:62ch">Brunchen kör lördag och söndag, från öppning klockan 11.30. Vardagar är det à la carte som gäller — samma kök, andra rätter.</p>
     <div class="facts">
       <div class="fact"><h3>Drop-in only</h3><p>Ingen bordsbokning i Umeå. Först till kvarn — kom tidigt om ni är många.</p></div>

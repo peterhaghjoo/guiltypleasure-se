@@ -177,7 +177,7 @@ html = head(title,desc,"/meny/",extra_schema=schema,fontpath="../fonts/",og="og-
   <section class="hero wrap" style="padding-top:34px;padding-bottom:20px">
     <div class="eyebrow">All day — samma meny hela dagen · Sommar 2026 · Mån–Sön</div>
     <h1>Drypande god mat &amp; drinkar som håller historierna vid liv</h1>
-    <p class="sub">Min meny byter skepnad med säsongen — det här är sommaren. Priser i kronor. Allergier eller veganskt? Fråga mig, jag hjälper dig.</p>
+    <p class="sub">Vår meny byter skepnad med säsongen — det här är sommaren. Priser i kronor. Allergier eller veganskt? Fråga oss, vi hjälper dig.</p>
     <div class="cta-row"><a class="btn btn-pink" href="#mat">Maten</a><a class="btn btn-line" href="#bar">Baren</a></div>
   </section>
   <div class="marquee" aria-hidden="true"><span>DAY &amp; NIGHT DEAL · 1 SMALL + 1 BIG = 299 · LOBSTER +50 · STEAK +100 · DAY &amp; NIGHT DEAL · 1 SMALL + 1 BIG = 299 · LOBSTER +50 · STEAK +100 · </span></div>
