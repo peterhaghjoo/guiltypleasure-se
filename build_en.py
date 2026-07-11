@@ -13,7 +13,10 @@ MENU_EN = MENU_ROWS.replace("Ur baren","From the bar").replace("Vår stolthet �
  .replace("Vodka, kaffelikör &amp; espressogranita — välj Original, Salted Caramel eller Kanelbulle.","Vodka, coffee liqueur &amp; espresso granita — Original, Salted Caramel or Cinnamon Bun.")\
  .replace("Gin, viol, citron, ingefäraskum &amp; salt.","Gin, violet, lemon, ginger foam &amp; salt.")\
  .replace("Viol, citron, ingefäraskum &amp; salt. Hela vår No Regrets-lista är alkoholfri.","Violet, lemon, ginger foam &amp; salt. Our whole No Regrets list is zero-proof.")\
- .replace("Tryck på en rad för detaljer. Hela menyn får du på plats — den byter skepnad med säsongen.",'Tap a row for details. <a href="../meny/index.html">See the full menu →</a> It changes with the seasons.')
+ .replace("Tryck på en rad för detaljer. Hela menyn får du på plats — den byter skepnad med säsongen.",'Tap a row for details. <a href="meny/index.html">See the full menu →</a> It changes with the seasons.')
+# OBS: foten pekar på den ENGELSKA menyn. "meny/index.html" gäller från /en/
+# (hubben) -> /en/meny/. build_en_cities.py skriver om stigen till
+# "../meny/index.html" för stadssidornas djup (/en/<stad>/ -> /en/meny/).
 
 EN_DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 
@@ -124,6 +127,7 @@ def main():
     blocks=re.findall(r'<script type="application/ld\+json">(.*?)</script>', s, re.S)
     for b in blocks: json.loads(b)
     assert 'lang="en"' in s and "tel:" not in s and "hreflang" in s
+    assert 'href="meny/index.html">See the full menu' in s, "EN-hubbens meny-fot ska peka på /en/meny/"
     assert "hreflang" in (ROOT/"index.html").read_text(encoding="utf-8")
     print(f"en/index.html: {len(s)//1024} KB, {len(blocks)} schema OK, hreflang OK, sitemap: {'/en/' in sm}")
 
