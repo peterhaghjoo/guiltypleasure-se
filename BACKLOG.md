@@ -18,12 +18,12 @@
       **16 av 33 gamla URL:er i redirect-kartan skulle idag landa på 404.**
       Detaljer inarbetade i 1.1b och 1.2–1.4 nedan.
 
-- [x] **1.1b ÖPPETTIDSBUGG I SCHEMA.** KLAR 2026-07-11 (PR #1, `aa520ee`).
-      `openingHoursSpecification` expanderade dagsintervall till bara
-      ändpunkterna, så Umeås `Tuesday–Thursday` blev `["Tuesday","Thursday"]`
-      och **onsdagen försvann** — Google läste Umeå som stängt på onsdagar.
-      `day_range()` fyller nu hela spannet. Verifierat: båda orter 7/7 dagar
-      mot NAP-källan (§5).
+- [x] **1.1b ÖPPETTIDSBUGG I SCHEMA — FIXAD i PR #1 (2026-07-11, aa520ee).**
+      `build.py` expanderade dagsintervall till bara ändpunkterna, så onsdagen
+      försvann ur Umeås `openingHoursSpecification` — Google läste Umeå som
+      stängt på onsdagar. `day_range()` fyller nu hela spannet. Verifierat:
+      båda orter 7/7 dagar mot NAP-källan i §5. Samma PR: PRELAUNCH-noindex
+      på alla sidor + UTF-8-encoding i byggskripten.
 
 - [ ] **1.2 Intentionssidor per stad** — SAKNAS HELT (10 sidor).
       SV: `/umea/brunch/`, `/umea/lunch/`, `/umea/after-work/` +
@@ -34,6 +34,8 @@
       En stark kanonisk sida per intent, riktigt innehåll i GP's röst.
       Lunch = säsongsmarkerad (stängd sommar).
       Titelmönster enligt tagg-researchen (Tornhuset: nyckelord först).
+      ARBETSSÄTT: Peter + Claude (chatten) skriver /umea/brunch/ som mall
+      först; övriga nio produceras efter mallen, en PR per batch.
 
 - [ ] **1.3 Kompletterande sidor** — SAKNAS HELT (4 sidor).
       `/om-oss/` (mål för 301 från /sv/koncept/ — trasig redirect),
@@ -91,16 +93,17 @@
 - [ ] **3.1 Avveckla trakk.ai på gamla WordPress-sajten (BRÅDSKANDE —
       görs oberoende av övriga fasen):** avaktivera + radera plugin,
       ta bort trakk-användare, återkalla API-åtkomst. Varje dag den är
-      aktiv skadar den Google-profilen. PETER gör detta i wp-admin
-      (Claude Code kan guida).
+      aktiv skadar den Google-profilen. Trakk-sidorna ligger LIVE just nu
+      (t.ex. /en/disco-umea/, /en/restaurant-umea/ — tunt AI-fyllnadsinnehåll
+      med upprepade stycken). PETER gör detta i wp-admin (Claude Code guidar).
 - [ ] **3.2 301-redirects:** implementera hela docs/redirect-map.md som
       _redirects-fil för Cloudflare Pages. Testa att varje gammal URL
       ger 301 → rätt mål (curl-loop).
 - [ ] **3.3 Search Console:** verifiera nya sajten, baseline nuvarande
       toppsidor/queries FÖRE cutover.
 - [ ] **3.4 Pre-launch-checklista:** 404, security headers/CSP, mobil-
-      genomgång, Lighthouse ≥ 95, WCAG-stickprov, noindex BORT från
-      produktionsbygget vid cutover (och bara då).
+      genomgång, Lighthouse ≥ 95, WCAG-stickprov, sätt `PRELAUNCH = False`
+      i build.py vid cutover (och bara då).
 - [ ] **3.5 DNS-cutover:** peka guiltypleasure.se till Cloudflare Pages.
       Direkt efter: skicka in ny sitemap, begär omindexering av
       nyckelsidor, bevaka Coverage. Behåll 301:orna permanent.
@@ -125,9 +128,12 @@
 ## Verkstad — småpunkter (tas löpande)
 
 - [x] git pull lokalt (nya commits 2026-07-11: docs + CLAUDE.md + BACKLOG)
-- [ ] `write_text()` i byggskripten saknar `encoding="utf-8"` → kraschar på
-      Windows (cp1252 klarar inte `💚`/`→`). CI:n på Linux är opåverkad.
-      Går att bygga lokalt med `PYTHONUTF8=1` tills det fixas.
+- [x] `write_text()`/`read_text()` utan encoding — FIXAT i PR #1 (aa520ee).
+      Bygget är nu plattformsoberoende, ingen PYTHONUTF8 behövs.
+- [ ] Verifiera live efter PR #1-deployen: curl mot pages.dev — noindex på
+      alla sidor, Umeås openingHoursSpecification 7/7 dagar
+- [ ] Cloudflare Pages: slå på Preview deployments för brancher (PETER i
+      dashboarden — PR #1 hade noll statuscheckar, ingen preview skapas idag)
 - [ ] Stäng öppen PR + 7 branches i guilty-pleasure-cafe, arkivera sedan
       repot (Settings → Archive)
 - [ ] Besluta: guiltypleasure-se publikt eller privat (rekommendation: privat)
@@ -135,6 +141,8 @@
       bekräftar att den saknas)
 - [ ] Windows aktiva timmar (efter serverrapporten)
 - [ ] OneDrive-kvot kollad; Drive-flytten av GP-arkiv + brand-delta klar
+- [ ] GDPR: begränsa åtkomsten till HR-mappen i delade enheten (PETER,
+      Drive → Dela → begränsa)
 
 ## Idéer / senare (medvetet parkerade)
 
