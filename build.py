@@ -251,7 +251,7 @@ def footer(base=""):
         <p>Telefon? Min AI-värdinna svarar från augusti. Tills dess: maila eller DM:a.</p>
       </div>
     </div>
-    <p class="fin">See you at GP's for a delicious time, friend. 💚 · © 2026 Guilty Pleasure</p>
+    <p class="fin">See you at GP's for a delicious time, friend. 💚 · © 2026 Guilty Pleasure · Umeå & Sundsvall</p>
   </div>
 </footer>
 </body>
