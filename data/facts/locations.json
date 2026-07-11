@@ -1,0 +1,68 @@
+{
+  "_source_of_truth": "docs/website-rebuild-design.md §5 — bekräftat mot Google Business Profile 2026-07-07 av Peter",
+  "_rule": "Öppettider och adresser får ALDRIG härledas, gissas eller kompletteras. Endast dessa värden.",
+
+  "umea": {
+    "name":        { "value": "Umeå", "status": "verified", "source": "docs/website-rebuild-design.md §5", "verified_at": "2026-07-07" },
+    "street":      { "value": "Skolgatan 62", "status": "verified", "source": "docs/website-rebuild-design.md §5", "verified_at": "2026-07-07" },
+    "postal":      { "value": "903 29", "status": "verified", "source": "docs/website-rebuild-design.md §5", "verified_at": "2026-07-07" },
+    "region":      { "value": "Västerbottens län", "status": "verified", "source": "docs/website-rebuild-design.md §5", "verified_at": "2026-07-07" },
+    "email":       { "value": "umea@guiltypleasure.se", "status": "verified", "source": "docs/website-rebuild-design.md §5", "verified_at": "2026-07-07" },
+    "telephone":   { "value": null, "status": "verified", "source": "docs/website-rebuild-design.md §5 (öppen punkt: 'Phone TBD')", "verified_at": "2026-07-07",
+                     "note": "DET FINNS INGET TELEFONNUMMER. Sajten får inte antyda att ett är på väg, och absolut inte namnge en tidpunkt." },
+    "opened_year": { "value": 2021, "status": "verified", "source": "docs/website-rebuild-design.md §5 ('Since 2021')", "verified_at": "2026-07-07" },
+    "booking":     { "value": "drop-in", "status": "verified", "source": "docs/website-rebuild-design.md §5 ('Drop-in only (for now)')", "verified_at": "2026-07-07",
+                     "note": "'(for now)' i källan är INTE ett publicerbart löfte om framtida bokning. Sajten säger drop-in, inget mer." },
+    "hours": {
+      "status": "verified", "source": "docs/website-rebuild-design.md §5 (GBP)", "verified_at": "2026-07-07",
+      "days": {
+        "monday":    { "opens": "11:30", "closes": "22:00" },
+        "tuesday":   { "opens": "11:30", "closes": "00:00" },
+        "wednesday": { "opens": "11:30", "closes": "00:00" },
+        "thursday":  { "opens": "11:30", "closes": "00:00" },
+        "friday":    { "opens": "11:30", "closes": "01:00" },
+        "saturday":  { "opens": "11:30", "closes": "01:00" },
+        "sunday":    { "opens": "11:30", "closes": "22:00" }
+      }
+    },
+    "brunch": {
+      "value": "Serveras lördag och söndag från öppning.",
+      "status": "verified", "source": "Peter, chatt 2026-07-11 (ägargodkänt)", "verified_at": "2026-07-11",
+      "days": ["saturday", "sunday"], "opens": "11:30", "closes": "16:00",
+      "note": "Sluttiden 16:00 är ett ANTAGANDE av Claude, inte bekräftat av Peter. Se claims.json → brunch_end_time."
+    },
+    "maps": { "value": "https://maps.google.com/?q=Guilty+Pleasure+Caf%C3%A9+Skolgatan+62+Ume%C3%A5", "status": "verified", "source": "konstruerad ur verifierad adress", "verified_at": "2026-07-11" },
+    "landmarks": { "value": null, "status": "expired",
+                   "note": "BORTTAGET 2026-07-11. Sajten påstod 'ett stenkast från Rådhustorget' och 'tio minuters promenad från Umeå Central'. Ingen källa. Se removed.json." }
+  },
+
+  "sundsvall": {
+    "name":        { "value": "Sundsvall", "status": "verified", "source": "docs/website-rebuild-design.md §5", "verified_at": "2026-07-07" },
+    "street":      { "value": "Storgatan 12", "status": "verified", "source": "docs/website-rebuild-design.md §5", "verified_at": "2026-07-07" },
+    "postal":      { "value": "852 31", "status": "verified", "source": "docs/website-rebuild-design.md §5", "verified_at": "2026-07-07" },
+    "region":      { "value": "Västernorrlands län", "status": "verified", "source": "docs/website-rebuild-design.md §5", "verified_at": "2026-07-07" },
+    "email":       { "value": "sundsvall@guiltypleasure.se", "status": "verified", "source": "docs/website-rebuild-design.md §5", "verified_at": "2026-07-07" },
+    "telephone":   { "value": null, "status": "verified", "source": "docs/website-rebuild-design.md §5 (öppen punkt)", "verified_at": "2026-07-07",
+                     "note": "DET FINNS INGET TELEFONNUMMER." },
+    "opened_year": { "value": null, "status": "draft",
+                     "note": "Källan säger bara '(newer)'. Inget årtal får publiceras." },
+    "booking":     { "value": "https://www.bokabord.se/restaurang/guilty-pleasure-cafe-sundsvall",
+                     "status": "verified", "source": "docs/website-rebuild-design.md §7 + URL verifierad HTTP 200 2026-07-11", "verified_at": "2026-07-11" },
+    "hours": {
+      "status": "verified", "source": "docs/website-rebuild-design.md §5 (GBP)", "verified_at": "2026-07-07",
+      "days": {
+        "monday":    { "opens": "11:00", "closes": "22:00" },
+        "tuesday":   { "opens": "11:00", "closes": "22:00" },
+        "wednesday": { "opens": "11:00", "closes": "00:00" },
+        "thursday":  { "opens": "11:00", "closes": "00:00" },
+        "friday":    { "opens": "11:00", "closes": "01:00" },
+        "saturday":  { "opens": "11:00", "closes": "01:00" },
+        "sunday":    { "opens": "11:00", "closes": "22:00" }
+      }
+    },
+    "brunch": { "value": null, "status": "draft",
+                "note": "Peter bekräftade att brunchMENYN är identisk med Umeås. Han har INTE sagt vilka dagar brunch serveras i Sundsvall. Får inte publiceras." },
+    "maps": { "value": "https://maps.google.com/?q=Guilty+Pleasure+Caf%C3%A9+Storgatan+12+Sundsvall", "status": "verified", "source": "konstruerad ur verifierad adress", "verified_at": "2026-07-11" },
+    "landmarks": { "value": "Stenstan", "status": "verified", "source": "docs/website-rebuild-design.md (stadsdelsnamn, inte ett avståndspåstående)", "verified_at": "2026-07-11" }
+  }
+}

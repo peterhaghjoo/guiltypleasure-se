@@ -1,0 +1,97 @@
+{
+  "_purpose": "Varje påstående som sanerats bort från sajten, med exakt ordalydelse och skäl. Raderas aldrig — det här är kvittot på vad som faktiskt låg live.",
+  "_sanitized_at": "2026-07-11",
+  "_trigger": "Extern granskning hittade påhittade uppgifter på live-sajten (guiltypleasure-se.pages.dev).",
+
+  "removed": [
+    {
+      "id": "ai-vardinna",
+      "claim_sv": "Telefon är på väg — AI-värdinnan svarar från augusti 2026.",
+      "claim_en": "A phone line is on its way — the AI host answers from August 2026.",
+      "also_as": "Telefon? Min AI-värdinna svarar från augusti. Tills dess: maila eller DM:a.",
+      "found_in": [
+        "build.py:430 (footer, varje sida)",
+        "build.py:587 (Umeå FAQ)",
+        "build.py:595 (Sundsvall FAQ)",
+        "build_en.py:101 (engelsk footer)",
+        "build_en_cities.py:23, 70, 78 (engelska FAQ + footer)"
+      ],
+      "why_removed": "Rent påhitt. Ingen källa någonstans i docs/. Ett framtidslöfte med exakt datum om en tjänst som inte finns. Framtidslöften är ägarbeslut, inte agentbeslut.",
+      "replaced_with": "Kontaktvägar som faktiskt finns: e-post och Instagram. Inget om telefon.",
+      "peter_must_decide": "Ska en telefonlinje (AI eller mänsklig) nämnas alls? I så fall: när, och med vilken formulering?"
+    },
+    {
+      "id": "umea-bokning-hosten",
+      "claim_sv": "Bordsbokning lanseras under hösten 2026.",
+      "claim_en": "Table booking launches in autumn 2026.",
+      "found_in": [
+        "build.py:582 (Umeå FAQ)",
+        "build.py:644 (Umeå policytext)",
+        "build.py:558 (Umeå-berättelsen: 'Bordsbokning lanserar jag till hösten')",
+        "build_en_cities.py:42, 65, 99 (engelska motsvarigheter)"
+      ],
+      "why_removed": "Källan (docs/website-rebuild-design.md §5) säger 'Drop-in only (for now)'. '(for now)' är inte ett lanseringsdatum. Sajten uppfann både beslutet och tidpunkten.",
+      "replaced_with": "Drop-in only. Punkt. Inget löfte om framtiden.",
+      "peter_must_decide": "Kommer bordsbokning till Umeå? När? Först då får det stå på sajten."
+    },
+    {
+      "id": "promenadavstand",
+      "claim_sv": "Cirka tio minuters promenad från Umeå Central. Ett stenkast från Rådhustorget.",
+      "claim_en": "A ten-minute walk from Umeå Central station. A stone's throw from Rådhustorget.",
+      "found_in": [
+        "build.py:558 (Umeå-berättelsen)",
+        "build.py:584 (Umeå FAQ)",
+        "build_en_cities.py:42, 67"
+      ],
+      "why_removed": "Ingen källa. Avstånd och gångtider är verifierbara fakta som Google kan motsäga direkt — blir de fel skadar de förtroendet mer än de hjälper.",
+      "replaced_with": "Adressen. 'Mitt i centrala Umeå' behålls (kvalitativt, inte ett mätbart påstående).",
+      "peter_must_decide": "Vill du ha vägbeskrivningar? Då mäter vi dem och skriver in dem i registret."
+    },
+    {
+      "id": "hundvatten",
+      "claim_sv": "Vatten står framme. / Vatten fixar jag.",
+      "claim_en": "Water's already out. / I'll sort the water.",
+      "found_in": [
+        "build.py:558 (Umeå-berättelsen)",
+        "build.py:586 (Umeå FAQ)",
+        "build.py:594 (Sundsvall FAQ)",
+        "build.py (hundsektionen, hub + stadssidor)",
+        "build_intent.py:92 (brunch-FAQ)",
+        "build_en*.py (engelska motsvarigheter)"
+      ],
+      "why_removed": "Att hundar är välkomna är belagt i designspecen. Att det ALLTID står vatten framme är ett konkret serviceåtagande utan källa.",
+      "replaced_with": "Hundar är välkomna. Inget om vatten.",
+      "peter_must_decide": "Står det vatten framme? Om ja: skriv in det, så får det stå."
+    },
+    {
+      "id": "vegetariska-ratter",
+      "claim_sv": "Green Goddess Toast och Smashed Avocado Benedict är vegetariska.",
+      "found_in": ["build_intent.py:90 (brunch-FAQ)"],
+      "why_removed": "Claudes egen härledning ur ingredienslistan — ingen källa. Exakt det fel som granskningen letade efter, och det var MITT.",
+      "replaced_with": "Att veganska alternativ finns (verifierat av Peter) — utan att peka ut vilka rätter.",
+      "peter_must_decide": "Vilka rätter är faktiskt vegetariska/veganska? (BACKLOG 2.1)"
+    },
+    {
+      "id": "alkoholfritt-prisspann",
+      "claim_sv": "Hela No Regrets-listan är alkoholfri, från Virgin Prince 0.0 (79 kr) till alkoholfri Coffee Granita. Priserna ligger på 39–89 kr.",
+      "found_in": ["build.py:586 (Umeå FAQ)"],
+      "why_removed": "Prisspannet stämmer inte mot menykällan. build_menu.py: Virgin Prince 79, Virgin Disco 79, Virgin Sour Cherry 89, Virgin Mojito 99, Coffee Granita 0.0 89 → spannet är 79–99, inte 39–89. (39 är priset på läsk, inte på No Regrets-listan.)",
+      "replaced_with": "Att listan är alkoholfri. Inget prisspann — priserna är ändå overifierade (BACKLOG 2.1).",
+      "peter_must_decide": "Verifiera menypriserna."
+    }
+  ],
+
+  "kept_but_flagged": [
+    {
+      "id": "brunch-sluttid",
+      "claim": "Brunch lör–sön 11:30–16:00 (openingHoursSpecification på /umea/brunch/)",
+      "issue": "Peter bekräftade att brunch serveras lör–sön från öppning. Han sa INGET om sluttid. 16:00 är Claudes antagande och ligger i strukturerad data som Google läser som fakta.",
+      "action": "Sluttiden tas bort ur schemat tills Peter bekräftar den. Öppningstiden 11:30 är belagd."
+    },
+    {
+      "id": "sundsvall-brunch",
+      "claim": "Ingen brunchsida finns för Sundsvall — bra.",
+      "issue": "Peter bekräftade att brunchMENYN är identisk. Han har inte sagt vilka DAGAR brunch serveras i Sundsvall. En Sundsvall-brunchsida får inte byggas förrän det är klart."
+    }
+  ]
+}

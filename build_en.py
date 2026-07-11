@@ -12,7 +12,7 @@ MENU_EN = MENU_ROWS.replace("Ur baren","From the bar").replace("Min stolthet —
  .replace("Tequila, jalapeño &amp; lime. Den bits — lagom mycket.","Tequila, jalapeño &amp; lime. It bites — just enough.")\
  .replace("Vodka, kaffelikör &amp; espressogranita — välj Original, Salted Caramel eller Kanelbulle.","Vodka, coffee liqueur &amp; espresso granita — Original, Salted Caramel or Cinnamon Bun.")\
  .replace("Gin, viol, citron, ingefäraskum &amp; salt.","Gin, violet, lemon, ginger foam &amp; salt.")\
- .replace("Viol, citron, ingefäraskum &amp; salt. Hela min No Regrets-lista är alkoholfri, 39–89 kr.","Violet, lemon, ginger foam &amp; salt. My whole No Regrets list is zero-proof, 39–89 SEK.")\
+ .replace("Viol, citron, ingefäraskum &amp; salt. Hela vår No Regrets-lista är alkoholfri.","Violet, lemon, ginger foam &amp; salt. Our whole No Regrets list is zero-proof.")\
  .replace("Tryck på en rad för detaljer. Hela menyn får du på plats — den byter skepnad med säsongen.",'Tap a row for details. <a href="../meny/index.html">See the full menu →</a> It changes with the seasons.')
 
 EN_DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
@@ -88,8 +88,8 @@ def hub_en():
   <section class="wrap surf-disco dogs">
     <div class="kicker">The dog is welcome</div>
     <h2>Bring your dog.</h2>
-    <p>It's not just you who's welcome — your four-legged best friend too. Dogs are always welcome in both Umeå and Sundsvall, and there's water waiting. Dog friendly, always.</p>
-    <div class="chips"><span class="chip">Water bowl</span><span class="chip">Dogs inside</span><span class="chip">Always welcome</span></div>
+    <p>It's not just you who's welcome — your four-legged best friend too. Dogs are always welcome in both Umeå and Sundsvall. Dog friendly, always.</p>
+    <div class="chips"><span class="chip">Dogs inside</span><span class="chip">Always welcome</span></div>
   </section>
   <section class="wrap surf-moss igband">
     <div class="kicker">Almost daily</div>
@@ -98,7 +98,7 @@ def hub_en():
     <a class="btn btn-pink" href="https://www.instagram.com/guiltypleasure.se/" rel="noopener">Follow on Instagram</a>
   </section>
 </main>
-""" + footer("../").replace("Häng med mig","Follow along").replace("Telefon? Min AI-värdinna svarar från augusti. Tills dess: maila eller DM:a.","No phone yet — my AI host answers from August. Until then: email or DM.").replace("Drop-in only — bara kom in.","Walk-ins only — just come in.").replace("Boka bord online</a> — eller kom förbi.","Book a table online</a> — or drop by.").replace("· karta</a>","· map</a>").replace('>karta<','>map<')
+""" + footer("../").replace("Häng med mig","Follow along").replace("Ingen telefon än — maila oss eller skicka DM på Instagram.","No phone yet — email us or send a DM on Instagram.").replace("Drop-in only — bara kom in.","Walk-ins only — just come in.").replace("Boka bord online</a> — eller kom förbi.","Book a table online</a> — or drop by.").replace("· karta</a>","· map</a>").replace('>karta<','>map<')
     html = h + body
     html = html.replace("</body>", en_status('{"umea":'+CITIES["umea"]["hours_js"]+',"sundsvall":'+CITIES["sundsvall"]["hours_js"]+"}") + "\n</body>")
     return fix_amps(html)

@@ -81,15 +81,15 @@ def cards(groups):
 
 FAQ = [
   ("När serveras brunch på GP's i Umeå?",
-   "Brunchen är en helggrej — lördag och söndag, från öppning klockan 11.30. Vardagar kör jag à la carte i stället."),
+   "Brunchen är en helggrej — lördag och söndag, från öppning klockan 11.30. Vardagar kör vi à la carte i stället."),
   ("Behöver man boka bord för brunch i Umeå?",
-   "Nej, jag kör drop-in only på Skolgatan 62 — först till kvarn. Kom tidigt om ni är många; helgförmiddagarna är min paradgren och borden går åt."),
+   "Nej, vi kör drop-in only på Skolgatan 62 — först till kvarn. Kom tidigt om ni är många; helgförmiddagarna är vår paradgren och borden går åt."),
   ("Vad kostar brunchen?",
    "Det finns ingen fast brunchbuffé — du väljer à la carte ur brunchmenyn. Bowls från 99 kronor, House Benedicts 119, pannkakor och french toast 119–139."),
-  ("Finns det vegetariskt eller veganskt på brunchen?",
-   "Ja. Green Goddess Toast och Smashed Avocado Benedict är vegetariska, och det finns alltid minst ett veganskt alternativ. Fråga mig så löser vi det."),
+  ("Finns det veganska alternativ på brunchen?",
+   "Ja, det finns alltid minst ett veganskt alternativ. Vilka rätter det gäller varierar med menyn — fråga oss på plats, så löser vi det."),
   ("Får man ta med hunden på brunch?",
-   "Ja, hundar är alltid välkomna. Vatten står framme."),
+   "Ja, hundar är alltid välkomna."),
   ("Serverar ni alkoholfritt till brunchen?",
    "Absolut. Hela No Regrets-listan är alkoholfri, och kaffet har fri påtår."),
 ]
@@ -111,8 +111,15 @@ def build():
             for n,p,d in items]}
         for sek,items in BRUNCH]}
 
-    # Brunchen är ett tidsbegränsat erbjudande — modelleras som en egen
-    # OpeningHoursSpecification, inte som ortens generella öppettider.
+    # Brunchen modelleras som en egen entitet under Umeå-restaurangen.
+    #
+    # INGEN openingHoursSpecification. Peter har bekräftat att brunch serveras
+    # lördag och söndag FRÅN ÖPPNING (11.30) — han har aldrig sagt när den
+    # SLUTAR. Ett påhittat "closes" i strukturerad data läses av Google som
+    # fakta, och en gäst som kommer 15.30 och får höra att brunchen är slut har
+    # blivit lurad av vår markup. Hellre ingen uppgift än en påhittad.
+    # Att brunchen är en helggrej står i den synliga texten och i FAQ:n, båda
+    # med källa. Se data/facts/removed.json → brunch-sluttid.
     event = {"@context":"https://schema.org","@type":"FoodEstablishment",
       "@id":url+"#brunch",
       "name":"Brunch på GP's Umeå",
@@ -122,9 +129,6 @@ def build():
       "servesCuisine":["Brunch"],
       "acceptsReservations":False,
       "hasMenu":{"@id":url+"#menu"},
-      "openingHoursSpecification":[
-        {"@type":"OpeningHoursSpecification","dayOfWeek":["Saturday","Sunday"],
-         "opens":"11:30","closes":"16:00","name":"Brunch"}],
     }
 
     schema = ('<script type="application/ld+json">'+json.dumps(menu_schema,ensure_ascii=False)+'</script>'
@@ -156,7 +160,7 @@ def build():
     <p class="sub" style="margin:0 0 18px;max-width:62ch">Brunchen kör lördag och söndag, från öppning klockan 11.30. Vardagar är det à la carte som gäller — samma kök, andra rätter.</p>
     <div class="facts">
       <div class="fact"><h3>Drop-in only</h3><p>Ingen bordsbokning i Umeå. Först till kvarn — kom tidigt om ni är många.</p></div>
-      <div class="fact"><h3>Hundvänligt</h3><p>Hundar är alltid välkomna. Vatten står framme.</p></div>
+      <div class="fact"><h3>Hundvänligt</h3><p>Hundar är alltid välkomna hos oss.</p></div>
       <div class="fact"><h3>Frozen mimosas</h3><p>Blodapelsinsorbet, fläder &amp; cava. Brunchens bästa vän — även 0.0 %.</p></div>
     </div>
   </section>
@@ -164,7 +168,7 @@ def build():
   <section class="wrap surf-moss" id="brunchmenyn">
     <div class="kicker">Lördag &amp; söndag</div>
     <h2>Brunchmenyn <span class="accent">— à la carte</span></h2>
-    <p class="sub" style="margin:0 0 22px">Priser i kronor. Lägg till extra: {EXTRAS}. Allergier eller veganskt? Fråga mig, jag hjälper dig.</p>
+    <p class="sub" style="margin:0 0 22px">Priser i kronor. Lägg till extra: {EXTRAS}. Allergier eller veganskt? Fråga oss, vi hjälper dig.</p>
     {cards(BRUNCH)}
     <div class="menucard" style="max-width:none">
       <div class="mc-head"><span class="tagpill">Till brunchen</span></div>

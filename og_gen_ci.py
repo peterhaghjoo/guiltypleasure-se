@@ -27,8 +27,12 @@ def og(fname, big, sub, tag="GUILTY PLEASURE CAFÉ"):
         f_big = ImageFont.truetype(TTF, size)
         if max(d.textlength(line, font=f_big) for line in big.split("\n")) <= W-160: break
         size -= 6
-    d.ellipse((80, 86, 104, 110), fill=ELD)
-    d.text((122, 78), tag, font=f_tag, fill=GRADDE)
+    # Ingen eldfärgad prick bredvid ordbilden.
+    # Grafisk manual s.19, don't #1: "Vi blandar inte flera färger i samma enhet."
+    # Manualens eget exempel är just avsändaren i en färg MED en prick i en annan.
+    # OG-bilden är sajtens avsändarbild i varje delning — den ska vara enfärgad.
+    # Borttagen 2026-07-11. Ordbilden flyttad dit pricken låg.
+    d.text((80, 78), tag, font=f_tag, fill=GRADDE)
     bb = d.multiline_textbbox((0,0), big, font=f_big, spacing=14)
     y = (H - (bb[3]-bb[1]))//2 - 40
     d.multiline_text((80, y), big, font=f_big, fill=DISCO, spacing=14)

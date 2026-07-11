@@ -1,0 +1,80 @@
+{
+  "_rule": "Varje sakpåstående utanför NAP. Endast status:verified får publiceras.",
+
+  "dogs_welcome": {
+    "value": "Hundar är välkomna.",
+    "status": "verified",
+    "source": "docs/website-rebuild-design.md §4 ('Bring your dog.' Dog-friendly, always) + grafisk manual/koncept",
+    "verified_at": "2026-07-07",
+    "used_on": ["hub", "umea", "sundsvall", "brunch", "amenityFeature"]
+  },
+
+  "dogs_water_bowl": {
+    "value": null,
+    "status": "expired",
+    "note": "BORTTAGET 2026-07-11. Sajten påstod 'Vatten står framme' / 'Vatten fixar jag'. Det är ett konkret serviceåtagande utan källa. Att hundar är välkomna är belagt; att det alltid finns vatten framme är det inte."
+  },
+
+  "zero_proof_available": {
+    "value": "Hela No Regrets-listan är alkoholfri.",
+    "status": "verified",
+    "source": "build_menu.py — menysektionen 'No Regrets — 0.0 %' med 5 poster ur GP_Menu_Copy_Final_2026-07-06",
+    "verified_at": "2026-07-11",
+    "note": "Prisspannet '39–89 kr' som sajten påstår stämmer INTE mot menykällan (Virgin Prince 79, Virgin Disco 79, Virgin Sour Cherry 89, Virgin Mojito 99, Coffee Granita 0.0 89) — spannet är 79–99. Se removed.json."
+  },
+
+  "vegan_option_exists": {
+    "value": "Det finns alltid minst ett veganskt alternativ.",
+    "status": "verified",
+    "source": "Peter, chatt 2026-07-11 (ägargodkänt besked på direkt fråga)",
+    "verified_at": "2026-07-11",
+    "scope": "VERKSAMHETSNIVÅ — får användas som amenityFeature på restaurangen.",
+    "note": "Detta är INTE en märkning per rätt. Vilka enskilda rätter som är veganska/vegetariska är OKÄNT och får inte påstås. Se suitableForDiet nedan."
+  },
+
+  "suitableForDiet_per_dish": {
+    "value": null,
+    "status": "conflicting",
+    "note": "BLOCKERAD. Två menykällor säger emot varandra: build_menu.py (levande) har noll dietmärkningar; docs/menu-content.md har V-märkningar men är en äldre, annan meny OCH är bevisligen fel (Löjromspizza märkt (V) trots löjrom och smetana). Ingen suitableForDiet får sättas förrän Peter verifierat menyn. Se BACKLOG 2.1."
+  },
+
+  "dish_is_vegetarian": {
+    "value": null,
+    "status": "expired",
+    "note": "BORTTAGET 2026-07-11. Brunchsidan påstod att 'Green Goddess Toast och Smashed Avocado Benedict är vegetariska'. Det var Claudes egen härledning ur ingredienslistan — ingen källa. Hollandaise, ricotta osv. gör dem inte automatiskt något. Struket."
+  },
+
+  "no_dance_floor": {
+    "value": "GP's har inget dansgolv. 'Disco' är stämning, musik och sen öppettid.",
+    "status": "verified",
+    "source": "Peter, chatt 2026-07-11",
+    "verified_at": "2026-07-11",
+    "consequence": "NightClub får INTE ingå i multi-typningen. Inget dansgolv i amenityFeature."
+  },
+
+  "telephone_future": {
+    "value": null,
+    "status": "expired",
+    "note": "BORTTAGET 2026-07-11. Sajten påstod 'AI-värdinnan svarar från augusti 2026' på fem ställen. Rent påhitt — ett framtidslöfte om en tjänst som inte finns, med ett exakt datum. Framtidslöften är ägarbeslut, inte agentbeslut. Struket helt."
+  },
+
+  "umea_booking_future": {
+    "value": null,
+    "status": "expired",
+    "note": "BORTTAGET 2026-07-11. Sajten påstod 'Bordsbokning lanseras hösten 2026' på fyra ställen. Källan (§5) säger 'Drop-in only (for now)' — '(for now)' är inte ett lanseringsdatum. Struket helt."
+  },
+
+  "walking_distance": {
+    "value": null,
+    "status": "expired",
+    "note": "BORTTAGET 2026-07-11. Sajten påstod 'tio minuters promenad från Umeå Central' och 'ett stenkast från Rådhustorget'. Ingen källa. Avståndspåståenden är verifierbara fakta som Google kan motsäga — och blir de fel skadar de förtroendet."
+  },
+
+  "free_coffee_refill": {
+    "value": "Bryggkaffe med fri påtår.",
+    "status": "verified",
+    "source": "docs/menu-content.md, brunchsektionen ('Bryggkaffe (fri påtår) 39')",
+    "verified_at": "2026-07-11",
+    "note": "Priset 39 är overifierat (BACKLOG 2.1), men att påtåren är fri står i källan."
+  }
+}

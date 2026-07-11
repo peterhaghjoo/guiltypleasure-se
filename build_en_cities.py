@@ -20,7 +20,7 @@ def en_topbar():
 def en_footer():
     return (footer("../")
       .replace("Häng med mig","Follow along")
-      .replace("Telefon? Min AI-värdinna svarar från augusti. Tills dess: maila eller DM:a.","No phone yet — my AI host answers from August. Until then: email or DM.")
+      .replace("Ingen telefon än — maila oss eller skicka DM på Instagram.","No phone yet — email us or send a DM on Instagram.")
       .replace("Drop-in only — bara kom in.","Walk-ins only — just come in.")
       .replace("Boka bord online</a> — eller kom förbi.","Book a table online</a> — or drop by.")
       .replace("· karta</a>","· map</a>").replace('>karta<','>map<'))
@@ -39,7 +39,7 @@ def rest_schema_en(city_key):
 UMEA_STORY_EN = """
 <p class="lead">I opened at Skolgatan 62 in 2021 with one simple idea: Umeå deserved a place where brunch doesn't end just because the clock does.</p>
 <p>Since then I've been the city's New York-inspired comfort bistro — the flagship of the Guilty Pleasure family. My day starts with frozen mimosas and comfort classics, slides into dinner when the afternoon runs out of steam, and ends — on weekends — in something best described as disco. Fridays and Saturdays I keep going until 1 am, and yes, you'll notice.</p>
-<p>You'll find me in the middle of central Umeå, a stone's throw from Rådhustorget and a ten-minute walk from Umeå Central station. Bringing the dog? Bring the dog — water's already out. Coming with a big group on a Saturday? Come early. I run walk-ins only, first come, first served, and it's a principle I'm proud of: life is too short for empty tables reserved for people who never show up. Table booking launches this autumn for the planners among you — but spontaneity will always come first here.</p>
+<p>You'll find us in the middle of central Umeå, at Skolgatan 62. Bringing the dog? Bring the dog. Coming with a big group on a Saturday? Come early. We run walk-ins only, first come, first served, and it's a principle we're proud of: life is too short for empty tables reserved for people who never show up.</p>
 <p>The bar is my stage. The signature is called Ghost of Prince — gin, violet, lemon, ginger foam and salt — and if you're not drinking alcohol you won't be parked on some sad substitutes' bench: my whole No Regrets list is built with the same love, from Virgin Prince to zero-proof Coffee Granita in three flavours. The coffee? Obviously. That's why the sign says Café.</p>
 <p>Umeå is a city that wakes up late and stays up late on weekends. I'm built for exactly that.</p>
 
@@ -62,12 +62,12 @@ SUNDSVALL_STORY_EN = """
 """
 
 UMEA_FAQ_EN = [
-  ("Can you book a table at GP's in Umeå?","No — I run walk-ins only, first come, first served. It's a principle: life is too short for empty tables. Table booking launches in autumn 2026; until then, just come by Skolgatan 62."),
+  ("Can you book a table at GP's in Umeå?","No — we run walk-ins only, first come, first served. It's a principle: life is too short for empty tables. Just come by Skolgatan 62."),
   ("What are the opening hours at GP's in Umeå?","Monday 11:30–22, Tuesday–Thursday 11:30–midnight, Friday–Saturday 11:30–01 and Sunday 11:30–22. Fridays and Saturdays run until 1 am."),
-  ("Where in Umeå is GP's?","At Skolgatan 62, in central Umeå — near Rådhustorget and about a ten-minute walk from Umeå Central station."),
-  ("Are dogs welcome at GP's Umeå?","Yes, dogs are always welcome. Water's already out."),
-  ("Are there alcohol-free drinks at GP's?","Yes — the whole No Regrets list is zero-proof, from Virgin Prince 0.0 (79 SEK) to alcohol-free Coffee Granita. Prices range 39–89 SEK."),
-  ("How do I contact GP's in Umeå?","Email umea@guiltypleasure.se or send a DM to @guiltypleasure.se on Instagram. A phone line is on its way — the AI host answers from August 2026."),
+  ("Where in Umeå is GP's?","At Skolgatan 62, in central Umeå."),
+  ("Are dogs welcome at GP's Umeå?","Yes, dogs are always welcome."),
+  ("Are there alcohol-free drinks at GP's?","Yes — the whole No Regrets list is zero-proof, from Virgin Prince 0.0 to alcohol-free Coffee Granita."),
+  ("How do I contact GP's in Umeå?","Email umea@guiltypleasure.se or send a DM to @guiltypleasure.se on Instagram."),
 ]
 
 SUNDSVALL_FAQ_EN = [
@@ -75,7 +75,7 @@ SUNDSVALL_FAQ_EN = [
   ("What are the opening hours at GP's in Sundsvall?","Monday–Tuesday 11–22, Wednesday–Thursday 11–midnight, Friday–Saturday 11–01 and Sunday 11–22. Weekend nights run until 1 am."),
   ("Where in Sundsvall is GP's?","At Storgatan 12, in the middle of Stenstan — Sundsvall's historic stone-town centre, near Stora torget."),
   ("Are dogs welcome at GP's Sundsvall?","Yes, always. I'll sort the water."),
-  ("How do I contact GP's in Sundsvall?","Email sundsvall@guiltypleasure.se or DM @guiltypleasure.se on Instagram. A phone line arrives in August 2026 — the AI host will answer."),
+  ("How do I contact GP's in Sundsvall?","Email sundsvall@guiltypleasure.se or DM @guiltypleasure.se on Instagram."),
 ]
 
 def city_page_en(key):
@@ -96,7 +96,7 @@ def city_page_en(key):
     cta = (f'<a class="btn btn-fire stickycta" href="{c["booking"]}" rel="noopener">Book a table</a>' if c["booking"]
            else f'<a class="btn btn-fire stickycta" href="{c["maps"]}" rel="noopener">Find us</a>')
     booking_row = (f'<a class="btn btn-pink" href="{c["booking"]}" rel="noopener">Book a table</a>' if c["booking"] else "")
-    policy = ("Walk-ins only — come as you are. Table booking launches in autumn 2026." if key=="umea"
+    policy = ("Walk-ins only — come as you are." if key=="umea"
               else "Book online or drop by — both work just as well.")
     menu_rows = MENU_EN.replace('href="../meny/index.html"','href="../../meny/index.html"')
     html = head(title,desc,f"/en/{key}/",lang="en",extra_schema=schema,fontpath="../../fonts/",og=f"og-{key}.png") + en_topbar() + f"""
@@ -139,8 +139,8 @@ def city_page_en(key):
   <section class="wrap surf-disco dogs">
     <div class="kicker">The dog is welcome</div>
     <h2>Bring your dog.</h2>
-    <p>It's not just you who's welcome — your four-legged best friend too. Dogs are always welcome, and there's water waiting. Dog friendly, always.</p>
-    <div class="chips"><span class="chip">Water bowl</span><span class="chip">Dogs inside</span><span class="chip">Always welcome</span></div>
+    <p>It's not just you who's welcome — your four-legged best friend too. Dogs are always welcome. Dog friendly, always.</p>
+    <div class="chips"><span class="chip">Dogs inside</span><span class="chip">Always welcome</span></div>
   </section>
   <section class="wrap">
     <div class="kicker">Quick answers</div>

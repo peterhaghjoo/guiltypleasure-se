@@ -79,14 +79,19 @@ CSS = """
      - Aldrig två starka färger (Eld + Disco) i samma element.
      ========================================================================== */
   :root{
-    --moss:#24270e;--moss-2:#424d1b;--cream:#fff8eb;--disco:#ff99ff;--fire:#ff450a;
+    --moss:#24270e;--cream:#fff8eb;--disco:#ff99ff;--fire:#ff450a;
     --line:rgba(36,39,14,.18);--line-cream:rgba(255,248,235,.22);--maxw:1080px;
     --display:"Guilty Pleasure","GP Fallback A","GP Fallback B","Arial Black",sans-serif;
     --body:"PP Neue Montreal","Montreal Fallback","Arial","Helvetica",sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{background:var(--cream);color:var(--moss);font:16px/1.65 var(--body);overflow-x:hidden}
+    /* Manualen s.13: BRÖDTEXT = PP Neue Montreal Medium, Tracking 40.
+     Tracking 40 i Adobe-enheter = 0.04em i CSS. Låg på 0 — nu rättat. */
+  body{background:var(--cream);color:var(--moss);font:500 16px/1.65 var(--body);
+    letter-spacing:.04em;overflow-x:hidden}
+  /* Display-rubriker ska ha Tracking 0 (manualen s.13) — neutralisera arvet. */
+  h1,h2,.wordmark,.marquee span,.act h3,.city h3{letter-spacing:0}
   img,svg{max-width:100%;height:auto}
   a{color:inherit;text-decoration:underline;text-decoration-thickness:.08em;text-underline-offset:.18em}
   a:hover{color:var(--fire)}
@@ -120,7 +125,9 @@ CSS = """
      Astro-mockupen kör h1 upp till 128px. Det är hela känslan. */
   .hero{padding:64px 0 44px;text-align:center}
   .gp-logo{width:min(380px,68vw);color:var(--moss);display:block;margin:0 auto 10px}
-  .eyebrow{font-weight:700;font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;
+  /* 19px FET = "stor text" enligt WCAG -> 3,0:1-tröskeln gäller -> Eld (3,25:1) OK.
+     På 12,5px hade den krävt 4,5:1 och fallit. Storleken är inte kosmetik, den är kravet. */
+  .eyebrow{font-weight:700;font-size:19px;letter-spacing:.18em;text-transform:uppercase;
     color:var(--fire)}
   h1{font-family:var(--display);font-weight:700;color:var(--fire);
     font-size:clamp(42px,9vw,120px);line-height:1.02;margin:16px auto 16px;
@@ -130,8 +137,10 @@ CSS = """
 
   /* ---- Knappar ------------------------------------------------------------- */
   .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-  .btn{display:inline-block;text-decoration:none;font-weight:700;letter-spacing:.05em;
-    text-transform:uppercase;font-size:14px;padding:14px 26px;border-radius:9999px;
+  /* 19px FET -> stor text -> 3,0:1 gäller -> Grädde på Eld (3,25:1) OK.
+     På 14px krävdes 4,5:1 och knapparna föll. Ger dessutom bättre tryckyta på mobil. */
+  .btn{display:inline-block;text-decoration:none;font-weight:700;letter-spacing:.04em;
+    text-transform:uppercase;font-size:19px;padding:15px 28px;border-radius:9999px;
     min-height:44px;border:2px solid transparent;
     transition:background .18s ease,color .18s ease,border-color .18s ease}
   .btn-fire{background:var(--fire);color:var(--cream);border-color:var(--fire)}
@@ -147,7 +156,7 @@ CSS = """
   /* ---- Marquee: eldband ---------------------------------------------------- */
   .marquee{background:var(--fire);color:var(--cream);padding:14px 0;overflow:hidden;
     white-space:nowrap;margin:34px 0 0}
-  .marquee span{display:inline-block;font-family:var(--display);font-size:23px;
+  .marquee span{display:inline-block;font-family:var(--display);font-size:24px;
     color:var(--cream);animation:roll 28s linear infinite}
   @keyframes roll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
@@ -159,8 +168,9 @@ CSS = """
   section{padding:64px 0}
   section.wrap{padding:64px 22px}
   .hero.wrap{padding:64px 22px 44px}
-  .kicker{font-weight:700;font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;
-    color:var(--fire);margin-bottom:10px}
+  /* Samma skäl som .eyebrow: Eld kräver stor text. 19px fet. */
+  .kicker{font-weight:700;font-size:19px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--fire);margin-bottom:12px}
   .surf-moss .kicker{color:var(--disco)}
   .surf-disco .kicker{color:var(--moss)}
   h2{font-family:var(--display);font-weight:700;font-size:clamp(32px,5.4vw,64px);
@@ -189,7 +199,7 @@ CSS = """
   /* ---- Menykort ------------------------------------------------------------ */
   .menucard{background:var(--cream);border:2px solid var(--moss);border-radius:26px;
     padding:34px 30px;max-width:640px;margin:0 auto}
-  .surf-moss .menucard{background:var(--moss-2);border-color:var(--disco);color:var(--cream)}
+  .surf-moss .menucard{background:var(--moss);border-color:var(--disco);color:var(--cream)}
   .mc-head{text-align:center;margin-bottom:20px}
   .mrow{padding:4px 0}
   .mrow summary{display:flex;align-items:baseline;gap:8px;cursor:pointer;list-style:none;
@@ -296,12 +306,14 @@ CSS = """
     outline-offset:3px;border-radius:6px}
   @media (prefers-reduced-motion:reduce){
     .marquee span{animation:none}
-    .wordmark::after{animation:none!important}
     .btn{transition:none}
   }
-  /* signaturanimation: diskret flimmer på wordmark-punkten */
-  .wordmark::after{content:"·";color:var(--disco);margin-left:2px;animation:flick 4.5s infinite}
-  @keyframes flick{0%,92%,96%,100%{opacity:1}94%,98%{opacity:.25}}
+  /* Ingen prick, ingen animation på symbolen.
+     Grafisk manual s.19, don't #1: "Vi blandar inte flera färger i samma enhet"
+     — manualens EGET exempel är GP's-symbolen i en färg med en prick i en annan.
+     Don't #3: "Vi använder inte glow-effekter, det gör våra neonskyltar själva."
+     Sajten hade en discofärgad prick som BLINKADE på den eldfärgade symbolen.
+     Två don'ts i en enda CSS-rad. Borttagen 2026-07-11. Lägg aldrig tillbaka den. */
 """
 
 FONTFACE = f"""<script>
@@ -347,7 +359,7 @@ MENU_ROWS = """
       <details class="mrow"><summary><b>Frozen Blood Orange Mimosa</b><span class="dots"></span><span class="price">119</span></summary><p>Blodapelsinsorbet, fläder &amp; cava. Brunchens bästa vän.</p></details>
       <details class="mrow"><summary><b>Spicy Margarita</b><span class="dots"></span><span class="price">139</span></summary><p>Tequila, jalapeño &amp; lime. Den bits — lagom mycket.</p></details>
       <details class="mrow"><summary><b>Coffee Granita</b><span class="dots"></span><span class="price">139</span></summary><p>Vodka, kaffelikör &amp; espressogranita — välj Original, Salted Caramel eller Kanelbulle.</p></details>
-      <details class="mrow"><summary><b>Virgin Prince 0.0</b><span class="sig">no regrets</span><span class="dots"></span><span class="price">79</span></summary><p>Viol, citron, ingefäraskum &amp; salt. Hela min No Regrets-lista är alkoholfri, 39–89 kr.</p></details>
+      <details class="mrow"><summary><b>Virgin Prince 0.0</b><span class="sig">no regrets</span><span class="dots"></span><span class="price">79</span></summary><p>Viol, citron, ingefäraskum &amp; salt. Hela vår No Regrets-lista är alkoholfri.</p></details>
       <div class="mc-foot">Tryck på en rad för detaljer. Hela menyn får du på plats — den byter skepnad med säsongen.</div>
 """
 
@@ -427,7 +439,7 @@ def footer(base=""):
       <div>
         <h3>Häng med mig</h3>
         <p class="soc"><a href="https://www.instagram.com/guiltypleasure.se/" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@guiltypleasure.se" rel="noopener">TikTok</a><a href="https://www.facebook.com/gpsumea/" rel="noopener">Facebook</a></p>
-        <p>Telefon? Min AI-värdinna svarar från augusti. Tills dess: maila eller DM:a.</p>
+        <p>Ingen telefon än — maila oss eller skicka DM på Instagram.</p>
       </div>
     </div>
     <p class="fin">See you at GP's for a delicious time, friend. 💚 · © 2026 Guilty Pleasure</p>
@@ -555,7 +567,7 @@ def faq_html(qas):
 UMEA_STORY = """
 <p class="lead">Jag öppnade på Skolgatan 62 år 2021 med en enkel idé: Umeå förtjänade ett ställe där brunchen inte tar slut bara för att klockan gör det.</p>
 <p>Sedan dess har jag varit stans New York-inspirerade comfort bistro — flaggskeppet i Guilty Pleasure-familjen. Hos mig börjar dagen med frozen mimosas och comfort-klassiker, glider över i middag när eftermiddagen tröttnat, och slutar på helgerna i något som bäst beskrivs som disco. Fredagar och lördagar håller jag igång till klockan ett, och ja — det märks.</p>
-<p>Du hittar mig mitt i centrala Umeå, ett stenkast från Rådhustorget och tio minuters promenad från Umeå Central. Kommer du med hunden? Ta med den in, vatten står framme. Kommer du med ett stort gäng en lördag? Kom tidigt — jag kör drop-in only, först till kvarn, och det är en princip jag är stolt över: livet är för kort för tomma bord som väntar på folk som inte dyker upp. Bordsbokning lanserar jag till hösten för er som vill planera — men spontaniteten kommer alltid ha förtur här.</p>
+<p>Du hittar oss mitt i centrala Umeå, på Skolgatan 62. Kommer du med hunden? Ta med den in. Kommer du med ett stort gäng en lördag? Kom tidigt — vi kör drop-in only, först till kvarn, och det är en princip vi är stolta över: livet är för kort för tomma bord som väntar på folk som inte dyker upp.</p>
 <p>Baren är min scen. Signaturen heter Ghost of Prince — gin, viol, citron, ingefäraskum och salt — och den som inte dricker alkohol får ingen tråkig avbytarbänk: hela min No Regrets-lista är byggd med samma kärlek, från Virgin Prince till alkoholfri Coffee Granita i tre smaker. Kaffet? Självklart. Det är därför det står Café på skylten.</p>
 <p>Umeå är en stad som vaknar sent och lägger sig sent på helgen. Jag är byggd för exakt det.</p>
 
@@ -567,7 +579,7 @@ UMEA_STORY = """
 SUNDSVALL_STORY = """
 <p class="lead">Mitt i Stenstan, på Storgatan 12, serverar jag finger-licking good food and drinks — all day, everyday.</p>
 <p>Jag är Sundsvalls del av Guilty Pleasure-familjen: samma New York-inspirerade comfort bistro-själ som flaggskeppet i Umeå, men med min egen rytm. Stenstans stenhus och Storgatans puls sätter tonen — hit kommer du för en lång brunch i helgen, en middag som inte har bråttom, eller en fredagskväll som växer till något mer. Fredag och lördag håller jag öppet till klockan ett.</p>
-<p>Till skillnad från min syster i norr tar jag emot bordsbokningar — boka online så står bordet redo när du kommer. Men dörren är lika öppen för dig som bara svänger förbi: drop-in är alltid välkommet, och baren har alltid plats för en till. Hundar? Välkomna, alltid. Vatten fixar jag.</p>
+<p>Till skillnad från vår syster i norr tar vi emot bordsbokningar — boka online så står bordet redo när du kommer. Men dörren är lika öppen för dig som bara svänger förbi: drop-in är alltid välkommet, och baren har alltid plats för en till. Hundar? Välkomna, alltid.</p>
 <p>Ur baren händer samma magi som i Umeå: Ghost of Prince är signaturen, Frozen Blood Orange Mimosa äger bruncherna, och hela No Regrets-listan är alkoholfri på riktigt — inte en eftertanke. Menyn byter skepnad med säsongen, så fråga vad som är nytt.</p>
 <p>Sundsvall har alltid vetat hur man har trevligt. Jag är bara stället där det händer.</p>
 
@@ -579,20 +591,20 @@ SUNDSVALL_STORY = """
 """
 
 UMEA_FAQ = [
-  ("Kan man boka bord på GP's i Umeå?","Nej — jag kör drop-in only, först till kvarn. Det är en princip: livet är för kort för tomma bord. Bordsbokning lanseras under hösten 2026; tills dess är det bara att komma in på Skolgatan 62."),
+  ("Kan man boka bord på GP's i Umeå?","Nej — vi kör drop-in only, först till kvarn. Det är en princip: livet är för kort för tomma bord. Kom in på Skolgatan 62, så löser vi det."),
   ("Vilka öppettider har GP's i Umeå?","Måndag 11.30–22, tisdag–torsdag 11.30–00, fredag–lördag 11.30–01 och söndag 11.30–22. Fredagar och lördagar är det öppet till klockan ett."),
-  ("Var i Umeå ligger GP's?","På Skolgatan 62, mitt i centrala Umeå — nära Rådhustorget och cirka tio minuters promenad från Umeå Central."),
-  ("Är hundar välkomna på GP's Umeå?","Ja, hundar är alltid välkomna. Vatten står framme."),
-  ("Finns alkoholfria drinkar på GP's?","Ja — hela No Regrets-listan är alkoholfri, från Virgin Prince 0.0 (79 kr) till alkoholfri Coffee Granita. Priserna ligger på 39–89 kr."),
-  ("Hur kontaktar jag GP's i Umeå?","Maila umea@guiltypleasure.se eller skicka DM på Instagram @guiltypleasure.se. Telefon är på väg — AI-värdinnan svarar från augusti 2026."),
+  ("Var i Umeå ligger GP's?","På Skolgatan 62, mitt i centrala Umeå."),
+  ("Är hundar välkomna på GP's Umeå?","Ja, hundar är alltid välkomna."),
+  ("Finns alkoholfria drinkar på GP's?","Ja — hela No Regrets-listan är alkoholfri, från Virgin Prince 0.0 till alkoholfri Coffee Granita."),
+  ("Hur kontaktar jag GP's i Umeå?","Maila umea@guiltypleasure.se eller skicka DM på Instagram @guiltypleasure.se."),
 ]
 
 SUNDSVALL_FAQ = [
   ("Kan man boka bord på GP's i Sundsvall?","Ja — boka online via bokabord, så står bordet redo. Drop-in funkar lika bra: dörren på Storgatan 12 är öppen och baren har alltid plats för en till."),
   ("Vilka öppettider har GP's i Sundsvall?","Måndag–tisdag 11–22, onsdag–torsdag 11–00, fredag–lördag 11–01 och söndag 11–22. Helgkvällarna går till klockan ett."),
   ("Var i Sundsvall ligger GP's?","På Storgatan 12, mitt i Stenstan — Sundsvalls stenstadskärna, nära Stora torget."),
-  ("Är hundar välkomna på GP's Sundsvall?","Ja, alltid. Vatten fixar jag."),
-  ("Hur kontaktar jag GP's i Sundsvall?","Maila sundsvall@guiltypleasure.se eller DM:a @guiltypleasure.se på Instagram. Telefon kommer i augusti 2026 — då svarar AI-värdinnan."),
+  ("Är hundar välkomna på GP's Sundsvall?","Ja, alltid."),
+  ("Hur kontaktar jag GP's i Sundsvall?","Maila sundsvall@guiltypleasure.se eller DM:a @guiltypleasure.se på Instagram."),
 ]
 
 def city_page(key):
@@ -641,7 +653,7 @@ def city_page(key):
         <h3>{c['street']}, {c['postal']} {c['name']}</h3>
         <p>GP's — Guilty Pleasure Café ligger på {c['street']} i centrala {c['name']}. <a href="{c['maps']}" rel="noopener">Öppna vägbeskrivning i kartor</a>.</p>
         <p><a href="mailto:{c['email']}">{c['email']}</a></p>
-        <p style="font-size:14px">{"Drop-in only — kom som du är. Bordsbokning lanseras hösten 2026." if key=="umea" else "Boka online eller kom förbi — båda funkar lika bra."}</p>
+        <p style="font-size:14px">{"Drop-in only — kom som du är." if key=="umea" else "Boka online eller kom förbi — båda funkar lika bra."}</p>
       </div>
       <div class="infocard"><h3>Öppettider</h3>{hours_table(key)}</div>
     </div>
@@ -649,8 +661,8 @@ def city_page(key):
   <section class="wrap surf-disco dogs">
     <div class="kicker">Vovven är välkommen</div>
     <h2>Bring your dog.</h2>
-    <p>Inte bara du är välkommen — din fyrbenta bästa vän också. Hundar är alltid välkomna hos mig, och vatten står framme. Hundvänligt, alltid.</p>
-    <div class="chips"><span class="chip">Vattenskål</span><span class="chip">Hundar inne</span><span class="chip">Alltid välkomna</span></div>
+    <p>Inte bara du är välkommen — din fyrbenta bästa vän också. Hundar är alltid välkomna hos oss. Hundvänligt, alltid.</p>
+    <div class="chips"><span class="chip">Hundar inne</span><span class="chip">Alltid välkomna</span></div>
   </section>
   <section class="wrap">
     <div class="kicker">Snabba svar</div>
@@ -723,8 +735,8 @@ def hub():
   <section class="wrap surf-disco dogs">
     <div class="kicker">Vovven är välkommen</div>
     <h2>Bring your dog.</h2>
-    <p>Inte bara du är välkommen — din fyrbenta bästa vän också. Hundar är alltid välkomna i både Umeå och Sundsvall, och vatten står framme. Hundvänligt, alltid.</p>
-    <div class="chips"><span class="chip">Vattenskål</span><span class="chip">Hundar inne</span><span class="chip">Alltid välkomna</span></div>
+    <p>Inte bara du är välkommen — din fyrbenta bästa vän också. Hundar är alltid välkomna i både Umeå och Sundsvall. Hundvänligt, alltid.</p>
+    <div class="chips"><span class="chip">Hundar inne</span><span class="chip">Alltid välkomna</span></div>
   </section>
   <section class="wrap surf-moss igband">
     <div class="kicker">Nästan dagligen i flödet</div>
@@ -845,6 +857,36 @@ if __name__ == "__main__":
         assert 'lang="sv"' in contents, p
         report.append(f"{p}: {len(contents)//1024} KB, {len(blocks)} schema-block OK")
     for k,v in QA_CONTRAST.items(): report.append(f"kontrast {k}: {v:.2f}:1")
+
+    # ---- FAKTAGRIND ----------------------------------------------------------
+    # En extern granskning hittade PÅHITTADE uppgifter live: en "AI-värdinna"
+    # som skulle svara i telefon från augusti 2026, en bordsbokning i Umeå som
+    # skulle lanseras hösten 2026, promenadavstånd till Umeå Central, en
+    # vattenskål som alltid stod framme. Inget av det hade en källa.
+    # Sanerat 2026-07-11 — varje borttaget påstående finns i data/facts/removed.json.
+    #
+    # Grinden ser till att de aldrig kommer tillbaka. Bygget FAILAR om någon av
+    # fraserna dyker upp i genererad HTML — oavsett vem eller vad som skrev dem.
+    FORBJUDET = [
+        ("AI-värdinna",         "påhittad tjänst, ingen källa"),
+        ("AI host",             "påhittad tjänst, ingen källa"),
+        ("augusti 2026",        "påhittat framtidsdatum"),
+        ("August 2026",         "påhittat framtidsdatum"),
+        ("hösten 2026",         "påhittat lanseringsdatum för Umeå-bokning"),
+        ("autumn 2026",         "påhittat lanseringsdatum för Umeå-bokning"),
+        ("minuters promenad",   "avståndspåstående utan källa"),
+        ("minute walk",         "avståndspåstående utan källa"),
+        ("Vatten står framme",  "serviceåtagande utan källa"),
+        ("water's already out", "serviceåtagande utan källa"),
+        ("är vegetariska",      "dietmärkning per rätt utan källa (BACKLOG 2.1)"),
+    ]
+    for p, contents in pages.items():
+        for fras, skal in FORBJUDET:
+            assert fras not in contents, (
+                f"FAKTAGRIND: '{fras}' finns i {p} — {skal}. "
+                f"Se data/facts/removed.json. Lägg ALDRIG tillbaka ett påstående "
+                f"utan att först skriva in det i faktaregistret med källa.")
+    report.append(f"faktagrind: {len(FORBJUDET)} förbjudna påståenden, 0 träffar")
 
     # Brandregel-grind: varje färgpar som används måste klara sitt WCAG-krav.
     for namn, uppmatt, krav in QA_REQUIRED:
