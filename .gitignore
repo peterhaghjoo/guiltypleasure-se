@@ -1,0 +1,31 @@
+# Byggoutput — genereras av build*.py + ci_build.sh vid varje deploy.
+# Repot ska bara innehålla källkod; sajten byggs i CI.
+
+# Paketerad sajt
+public/
+
+# Sidor som build*.py skriver i repo-roten
+index.html
+404.html
+sitemap.xml
+robots.txt
+umea/
+sundsvall/
+en/
+meny/
+
+# Bilder från og_gen_ci.py
+og.png
+og-umea.png
+og-sundsvall.png
+og-meny.png
+apple-touch-icon.png
+
+# Fonter dekodade ur fonts/*.b64 (b64-filerna är källan och ska spåras)
+fonts/*.woff2
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
