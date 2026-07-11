@@ -4,8 +4,24 @@
 import base64, json, re, pathlib
 
 ROOT = pathlib.Path(__file__).parent
+
+# ============================================================================
+# FÖRLANSERINGSFLAGGA
+# ----------------------------------------------------------------------------
+# True  = varje sida får <meta name="robots" content="noindex, nofollow">.
+#         Sajten ligger på guiltypleasure-se.pages.dev och ska INTE indexeras
+#         medan guiltypleasure.se fortfarande drivs av WordPress — annars
+#         konkurrerar de två sajterna om samma sökord.
+# False = sidorna blir indexerbara. Sätts till False EN gång, vid DNS-cutover
+#         (BACKLOG 3.4/3.5) — och bara då.
+#
+# robots.txt lämnas medvetet öppen (Allow: /): en Disallow skulle hindra Google
+# från att över huvud taget läsa noindex-taggen, vilket ger motsatt effekt.
+# ============================================================================
+PRELAUNCH = True
+
 FONT_B64 = base64.b64encode((ROOT/"fonts/gp-bold.woff2").read_bytes()).decode()
-LOGO = (ROOT/"logo.inline.svg").read_text()
+LOGO = (ROOT/"logo.inline.svg").read_text(encoding="utf-8")
 
 # ---------- kontrastberäkning (kvalitetsgrind) ----------
 def lum(hexc):
@@ -182,6 +198,7 @@ def head(title, desc, canon_path, lang="sv", extra_schema="", fontpath="fonts/",
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{'<meta name="robots" content="noindex, nofollow">' if PRELAUNCH else ''}
 <title>{title}</title>
 <meta name="description" content="{desc}">
 <meta property="og:title" content="{title}">
@@ -284,6 +301,18 @@ def hours_table(city_key):
     rows = "".join(f'<tr data-d="{(i+1)%7}"><td>{d}</td><td>{h}</td></tr>' for i,(d,h) in enumerate(c["hours_txt"]))
     return f'<table class="hours" data-city="{city_key}" aria-label="Öppettider GP\'s {c["name"]}">{rows}</table>'
 
+WEEK = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+
+def day_range(d1, d2):
+    """Alla dagar i spannet d1–d2, inklusive ändpunkterna.
+
+    hours_schema lagrar spann som ["Tuesday","Thursday",...]. Tidigare togs bara
+    ändpunkterna med, så onsdagen försvann ur schemat och Google läste Umeå som
+    stängt på onsdagar. Se BACKLOG 1.1b.
+    """
+    i, j = WEEK.index(d1), WEEK.index(d2)
+    return WEEK[i:j+1] if i <= j else WEEK[i:] + WEEK[:j+1]
+
 def rest_schema(city_key, page_url):
     c = CITIES[city_key]
     node = {
@@ -302,7 +331,7 @@ def rest_schema(city_key, page_url):
           {"@type":"MenuItem","name":"Frozen Blood Orange Mimosa","description":"Blodapelsinsorbet, fläder & cava","offers":{"@type":"Offer","price":"119","priceCurrency":"SEK"}},
           {"@type":"MenuItem","name":"Spicy Margarita","description":"Tequila, jalapeño & lime","offers":{"@type":"Offer","price":"139","priceCurrency":"SEK"}},
           {"@type":"MenuItem","name":"Virgin Prince 0.0","description":"Alkoholfri signatur — viol, citron, ingefäraskum & salt","offers":{"@type":"Offer","price":"79","priceCurrency":"SEK"}}]}]},
-      "openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":([d1] if d1==d2 else [d1,d2]),"opens":o,"closes":cl} for d1,d2,o,cl in c["hours_schema"]],
+      "openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":day_range(d1,d2),"opens":o,"closes":cl} for d1,d2,o,cl in c["hours_schema"]],
     }
     return '<script type="application/ld+json">'+json.dumps(node,ensure_ascii=False)+'</script>'
 
@@ -516,8 +545,8 @@ Sitemap: https://www.guiltypleasure.se/sitemap.xml
 if __name__ == "__main__":
     (ROOT/"umea").mkdir(exist_ok=True); (ROOT/"sundsvall").mkdir(exist_ok=True)
     pages = {"index.html":hub(),"umea/index.html":city_page("umea"),"sundsvall/index.html":city_page("sundsvall")}
-    for p,contents in pages.items(): (ROOT/p).write_text(contents)
-    (ROOT/"sitemap.xml").write_text(SITEMAP); (ROOT/"robots.txt").write_text(ROBOTS)
+    for p,contents in pages.items(): (ROOT/p).write_text(contents, encoding="utf-8")
+    (ROOT/"sitemap.xml").write_text(SITEMAP, encoding="utf-8"); (ROOT/"robots.txt").write_text(ROBOTS, encoding="utf-8")
 
     # 404 — Cloudflare Pages serverar 404.html automatiskt (tvåspråkig, noindex)
     nf = head("Sidan finns inte — GP's Guilty Pleasure Café","Oops — den här sidan finns inte. Men menyn gör det.","/404.html") + topbar("") + """
@@ -534,14 +563,17 @@ if __name__ == "__main__":
   </section>
 </main>
 """ + footer("")
-    nf = fix_amps(nf.replace('<link rel="canonical" href="https://www.guiltypleasure.se/404.html">','<meta name="robots" content="noindex">'))
+    # 404 ska aldrig indexeras och ska inte ha canonical. Under PRELAUNCH sätter
+    # head() redan noindex på alla sidor — undvik då en dubblerad robots-tagg.
+    nf = fix_amps(nf.replace('<link rel="canonical" href="https://www.guiltypleasure.se/404.html">',
+                             '' if PRELAUNCH else '<meta name="robots" content="noindex">'))
     # 404 serveras på godtyckligt URL-djup -> absoluta stigar
     for a,b in (('href="index.html','href="/index.html'),('href="umea/index.html"','href="/umea/"'),
                 ('href="sundsvall/index.html"','href="/sundsvall/"'),('url("fonts/','url("/fonts/'),
                 ('href="favicon.svg"','href="/favicon.svg"'),('href="apple-touch-icon.png"','href="/apple-touch-icon.png"')):
         nf = nf.replace(a,b)
     nf = nf.replace('href="/index.html#signaturer"','href="/#signaturer"').replace('href="/index.html"','href="/"')
-    (ROOT/"404.html").write_text(nf)
+    (ROOT/"404.html").write_text(nf, encoding="utf-8")
 
     # KVALITETSGRINDAR
     report=[]
