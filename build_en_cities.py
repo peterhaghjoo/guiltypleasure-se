@@ -13,8 +13,10 @@ ROOT = pathlib.Path(__file__).parent
 def en_topbar():
     # topbar("../") ger redan rätt relativa mål inne i /en/<stad>/ (../index.html -> /en/)
     t = topbar("../").replace('aria-label="Huvudmeny"','aria-label="Main menu"').replace(">Signaturer<",">Signatures<")
+    # Menu-länken pekar på den ENGELSKA menyn: ../meny/index.html -> /en/meny/
+    # (byggd av build_menu_en.py — verkstans "språkläcka" är täppt).
     t = t.replace('<a href="../umea/index.html">Umeå</a>',
-                  '<a href="../../meny/index.html">Menu</a>\n      <a href="../umea/index.html">Umeå</a>')
+                  '<a href="../meny/index.html">Menu</a>\n      <a href="../umea/index.html">Umeå</a>')
     return t
 
 def en_footer():
@@ -186,6 +188,9 @@ for key in ("umea","sundsvall"):
     for b in blocks: json.loads(b)
     words=len(re.sub(r'<[^>]+>',' ', (UMEA_STORY_EN if key=="umea" else SUNDSVALL_STORY_EN)).split())
     assert 'lang="en"' in s and "tel:" not in s and "hreflang" in s and "Öppet nu" not in s
+    # Nav-länken "Menu" ska gå till ENGELSKA menyn (/en/meny/)
+    assert '<a href="../meny/index.html">Menu</a>' in s, "nav ska peka på /en/meny/"
+    # mc-foot ("See the full menu") pekar fortfarande på svenska menyn — medveten kvarleva
     assert '../../meny/index.html' in s and 'stickycta' in s
     assert words>=350, f"story {key}: {words} ord"
     sv=(ROOT/f"{key}/index.html").read_text(encoding="utf-8")
