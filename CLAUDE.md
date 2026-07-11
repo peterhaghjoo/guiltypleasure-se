@@ -2,6 +2,8 @@
 
 Läs den här filen vid varje sessionsstart. Den är facit för hur projektet fungerar och vilka regler som gäller. Vid konflikt mellan denna fil och en enskild prompt: fråga innan du avviker.
 
+**Arbetsordning styrs av `BACKLOG.md`** — säger Peter "ta nästa punkt" är det översta obockade punkten där som gäller. Bocka av och committa vid avklarat.
+
 ## Vad projektet är
 
 Statisk restaurangsajt för GP's Guilty Pleasure Café (Umeå & Sundsvall), byggd för SEO/AEO. Ägare: Guilty Pleasure Group AB. Svenska är primärspråk, engelska sekundärt under /en/.
