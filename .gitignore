@@ -25,6 +25,9 @@ apple-touch-icon.png
 # Fonter dekodade ur fonts/*.b64 (b64-filerna är källan och ska spåras)
 fonts/*.woff2
 
+# Illustrationer dekodade ur assets/illustrations/*.webp.b64 (b64 är källan)
+illustrationer/
+
 # Python
 __pycache__/
 *.pyc
