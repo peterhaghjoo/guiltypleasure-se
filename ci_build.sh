@@ -16,6 +16,7 @@ python3 build.py
 python3 build_en.py
 python3 build_menu.py
 python3 build_en_cities.py
+python3 build_intent.py
 python3 og_gen_ci.py
 
 echo "== 4/4 Paketerar public/ =="
