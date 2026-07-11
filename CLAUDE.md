@@ -8,6 +8,8 @@ Statisk restaurangsajt för GP's Guilty Pleasure Café (Umeå & Sundsvall), bygg
 
 Live: https://guiltypleasure-se.pages.dev (domänen guiltypleasure.se pekas om vid lansering).
 
+**Detta är det ENDA levande sajtrepot.** Repot `guilty-pleasure-cafe` (Astro-spåret) är en arkiverad föregångare — bygg aldrig vidare där. Dess dokumentation är migrerad hit till `docs/`: redirect-karta (kritisk vid lansering), designspec, plan, menyinnehåll och tagg-research. Läs `docs/README.md` för översikt.
+
 ## Arkitektur — RÖR INTE utan uttryckligt beslut
 
 Egen statisk sajtgenerator i Python. Inga ramverk. Inga npm-beroenden. Ingen JavaScript-beroende text.
@@ -35,6 +37,8 @@ Färger:
 - Mossa `#24270e` (text/mörk)
 - Disco `#ff99ff` (lekfull accent)
 
+Regel: kombinera aldrig två starka färger (Eld/Disco) i samma element. Brödtext = Mossa på Grädde; starka färger endast för stor text/UI (kontrast).
+
 Typsnitt: GuiltyPleasure-Bold (rubriker), PPNeueMontreal-Bold/Medium (övrigt). Self-hostade som woff2 med `font-display: swap`. Inga Google Fonts, inga externa fontanrop.
 
 ## Språkregler
@@ -50,6 +54,11 @@ Typsnitt: GuiltyPleasure-Bold (rubriker), PPNeueMontreal-Bold/Medium (övrigt). 
 - Bilder: AVIF/WebP med fallback, srcset, lazy loading under fold
 - Valid schema.org-markup (Restaurant/LocalBusiness per enhet)
 - Sitemap uppdateras vid nya/ändrade sidor
+- Inget tunt AI-fyllnadsinnehåll — verkligt, specifikt innehåll (trakk.ai-misstaget upprepas aldrig)
+
+## Faktakällor (NAP)
+
+Sanningskälla för adresser och öppettider: `docs/website-rebuild-design.md` §5 (bekräftat mot Google Business Profile 2026-07-07). Hitta aldrig på öppettider eller kontaktuppgifter — vid osäkerhet, fråga Peter.
 
 ## Säkerhet
 
