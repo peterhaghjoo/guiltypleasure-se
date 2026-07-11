@@ -19,7 +19,7 @@ def en_topbar():
 
 def en_footer():
     return (footer("../")
-      .replace("Häng med mig","Follow along")
+      .replace("Häng med oss","Follow along")
       .replace("Ingen telefon än — maila oss eller skicka DM på Instagram.","No phone yet — email us or send a DM on Instagram.")
       .replace("Drop-in only — bara kom in.","Walk-ins only — just come in.")
       .replace("Boka bord online</a> — eller kom förbi.","Book a table online</a> — or drop by.")
@@ -37,27 +37,27 @@ def rest_schema_en(city_key):
     return s
 
 UMEA_STORY_EN = """
-<p class="lead">I opened at Skolgatan 62 in 2021 with one simple idea: Umeå deserved a place where brunch doesn't end just because the clock does.</p>
-<p>Since then I've been the city's New York-inspired comfort bistro — the flagship of the Guilty Pleasure family. My day starts with frozen mimosas and comfort classics, slides into dinner when the afternoon runs out of steam, and ends — on weekends — in something best described as disco. Fridays and Saturdays I keep going until 1 am, and yes, you'll notice.</p>
+<p class="lead">We opened at Skolgatan 62 in 2021 with one simple idea: Umeå deserved a place where brunch doesn't end just because the clock does.</p>
+<p>Since then we've been the city's New York-inspired comfort bistro — the flagship of the Guilty Pleasure family. Our day starts with frozen mimosas and comfort classics, slides into dinner when the afternoon runs out of steam, and ends — on weekends — in something best described as disco. Fridays and Saturdays we keep going until 1 am, and yes, you'll notice.</p>
 <p>You'll find us in the middle of central Umeå, at Skolgatan 62. Bringing the dog? Bring the dog. Coming with a big group on a Saturday? Come early. We run walk-ins only, first come, first served, and it's a principle we're proud of: life is too short for empty tables reserved for people who never show up.</p>
-<p>The bar is my stage. The signature is called Ghost of Prince — gin, violet, lemon, ginger foam and salt — and if you're not drinking alcohol you won't be parked on some sad substitutes' bench: my whole No Regrets list is built with the same love, from Virgin Prince to zero-proof Coffee Granita in three flavours. The coffee? Obviously. That's why the sign says Café.</p>
-<p>Umeå is a city that wakes up late and stays up late on weekends. I'm built for exactly that.</p>
+<p>The bar is our stage. The signature is called Ghost of Prince — gin, violet, lemon, ginger foam and salt — and if you're not drinking alcohol you won't be parked on some sad substitutes' bench: our whole No Regrets list is built with the same love, from Virgin Prince to zero-proof Coffee Granita in three flavours. The coffee? Obviously. That's why the sign says Café.</p>
+<p>Umeå is a city that wakes up late and stays up late on weekends. We're built for exactly that.</p>
 
-<p>What do I mean by comfort food? Think of the food you actually crave — generous, hot, a little indecently good — cooked properly and served without delay. The New York diner is the blueprint: high tempo in the kitchen, low tempo at the tables. You can make it here on your lunch break if you want to, but nobody will look at you sideways if you stay until closing. That's the whole point of the word pleasure in my name — and the word guilty you should take with a pinch of salt. Or a salted rim, like on the margarita.</p>
-<p>Weekends are my main event. Brunch rolls from opening — frozen mimosas, coffee that means something, and comfort classics until the afternoon gives up. Then I change costume: the lights drop, the playlist wakes up, and anyone who stays finds out why the third act is called disco. No dress code, no guest list — just a mood that keeps climbing until closing time.</p>
-<p>I'm part of the Guilty Pleasure family, with a sister in Sundsvall and the same four colours in my soul: fire, disco, moss and cream. But Umeå is where it all began in 2021, and this is where the flag stands. Come by and you'll understand.</p>
+<p>What do we mean by comfort food? Think of the food you actually crave — generous, hot, a little indecently good — cooked properly and served without delay. The New York diner is the blueprint: high tempo in the kitchen, low tempo at the tables. You can make it here on your lunch break if you want to, but nobody will look at you sideways if you stay until closing. That's the whole point of the word pleasure in our name — and the word guilty you should take with a pinch of salt. Or a salted rim, like on the margarita.</p>
+<p>Weekends are our main event. Brunch rolls from opening — frozen mimosas, coffee that means something, and comfort classics until the afternoon gives up. Then we change costume: the lights drop, the playlist wakes up, and anyone who stays finds out why the third act is called disco. No dress code, no guest list — just a mood that keeps climbing until closing time.</p>
+<p>We're part of the Guilty Pleasure family, with a sister in Sundsvall and the same four colours in our soul: fire, disco, moss and cream. But Umeå is where it all began in 2021, and this is where the flag stands. Come by and you'll understand.</p>
 """
 
 SUNDSVALL_STORY_EN = """
-<p class="lead">In the middle of Stenstan, at Storgatan 12, I serve finger-licking good food and drinks — all day, everyday.</p>
-<p>I'm Sundsvall's slice of the Guilty Pleasure family: the same New York-inspired comfort bistro soul as the flagship in Umeå, but with a rhythm of my own. The stone houses of Stenstan and the pulse of Storgatan set the tone — you come here for a long weekend brunch, a dinner in no particular hurry, or a Friday night that grows into something more. Fridays and Saturdays I'm open until 1 am.</p>
-<p>Unlike my sister up north, I take table bookings — book online and your table is ready when you arrive. But the door is just as open if you're simply passing by: walk-ins are always welcome, and the bar always has room for one more. Dogs? Welcome, always. I'll sort the water.</p>
+<p class="lead">In the middle of Stenstan, at Storgatan 12, we serve finger-licking good food and drinks — all day, everyday.</p>
+<p>We're Sundsvall's slice of the Guilty Pleasure family: the same New York-inspired comfort bistro soul as the flagship in Umeå, but with a rhythm of our own. The stone houses of Stenstan and the pulse of Storgatan set the tone — you come here for a long weekend brunch, a dinner in no particular hurry, or a Friday night that grows into something more. Fridays and Saturdays we're open until 1 am.</p>
+<p>Unlike our sister up north, we take table bookings — book online and your table is ready when you arrive. But the door is just as open if you're simply passing by: walk-ins are always welcome, and the bar always has room for one more. Dogs? Welcome, always.</p>
 <p>The bar works the same magic as in Umeå: Ghost of Prince is the signature, Frozen Blood Orange Mimosa owns the brunches, and the whole No Regrets list is properly alcohol-free — not an afterthought. The menu changes with the seasons, so ask what's new.</p>
-<p>Sundsvall has always known how to have a good time. I'm just the place where it happens.</p>
+<p>Sundsvall has always known how to have a good time. We're just the place where it happens.</p>
 
-<p>A practical word of advice: on weekend evenings it's smart to book — Stenstan fills up fast and my tables are popular. Weekday lunches and afternoons, walk-ins almost always work. Coming as a bigger group? Email me at sundsvall@guiltypleasure.se and we'll sort it out together. And follow @guiltypleasure.se on Instagram — that's where the news drops first, almost every day.</p>
-<p>Comfort food my way means food without fuss but with full effect — New York diner in the soul, northern Sweden in the heart. Come for lunch, come for dinner, just come. The tempo in the kitchen is high so the tempo at your table can be exactly as low as you like. And I take coffee very seriously; that's why the sign says Café.</p>
-<p>Weekends run in three acts here too. Brunch opens the game, dinner builds on it, and as Friday and Saturday nights approach midnight the third act — disco — has taken over the room. Stenstan outside the windows has seen most things since the 1800s, but I'd argue it has seen few places with this combination of frozen mimosas and disco feeling.</p>
+<p>A practical word of advice: on weekend evenings it's smart to book — Stenstan fills up fast and our tables are popular. Weekday lunches and afternoons, walk-ins almost always work. Coming as a bigger group? Email us at sundsvall@guiltypleasure.se and we'll sort it out together. And follow @guiltypleasure.se on Instagram — that's where the news drops first, almost every day.</p>
+<p>Comfort food our way means food without fuss but with full effect — New York diner in the soul, northern Sweden in the heart. Come for lunch, come for dinner, just come. The tempo in the kitchen is high so the tempo at your table can be exactly as low as you like. And we take coffee very seriously; that's why the sign says Café.</p>
+<p>Weekends run in three acts here too. Brunch opens the game, dinner builds on it, and as Friday and Saturday nights approach midnight the third act — disco — has taken over the room. Stenstan outside the windows has seen most things since the 1800s, but we'd argue it has seen few places with this combination of frozen mimosas and disco feeling.</p>
 <p>The flagship is in Umeå, but the soul here is the same: four colours, one attitude, and the conviction that life is too short for boring places. Welcome in.</p>
 """
 
@@ -74,7 +74,7 @@ SUNDSVALL_FAQ_EN = [
   ("Can you book a table at GP's in Sundsvall?","Yes — book online via bokabord and your table will be ready. Walk-ins work just as well: the door at Storgatan 12 is open and the bar always has room for one more."),
   ("What are the opening hours at GP's in Sundsvall?","Monday–Tuesday 11–22, Wednesday–Thursday 11–midnight, Friday–Saturday 11–01 and Sunday 11–22. Weekend nights run until 1 am."),
   ("Where in Sundsvall is GP's?","At Storgatan 12, in the middle of Stenstan — Sundsvall's historic stone-town centre, near Stora torget."),
-  ("Are dogs welcome at GP's Sundsvall?","Yes, always. I'll sort the water."),
+  ("Are dogs welcome at GP's Sundsvall?","Yes, always. Dogs are welcome at GP's Sundsvall."),
   ("How do I contact GP's in Sundsvall?","Email sundsvall@guiltypleasure.se or DM @guiltypleasure.se on Instagram."),
 ]
 
@@ -88,8 +88,8 @@ def city_page_en(key):
             + ("Walk-ins only, dogs welcome. Open till 1 am Fri–Sat." if key=="umea"
                else "Book online or walk in — dogs welcome. Open till 1 am Fri–Sat."))
     hero_h1 = "Umeå's guilty pleasure since 2021" if key=="umea" else "Finger-licking good — in the heart of Stenstan"
-    hero_sub = ("I'm the flagship. Right in the city centre, at Skolgatan 62 — where cravings meet good vibes." if key=="umea"
-                else "I'm GP's in Sundsvall. Storgatan 12 — food and drinks, all day, everyday.")
+    hero_sub = ("We're the flagship. Right in the city centre, at Skolgatan 62 — where cravings meet good vibes." if key=="umea"
+                else "We're GP's in Sundsvall. Storgatan 12 — food and drinks, all day, everyday.")
     crumbs = breadcrumbs([("Home","https://www.guiltypleasure.se/en/"),
                           (c["name"], url)], url)
     schema = rest_schema_en(key) + "\n" + faq_schema(faqs,url) + "\n" + crumbs
@@ -114,7 +114,7 @@ def city_page_en(key):
   </section>
   <div class="marquee" aria-hidden="true"><span>BRUNCH · DINNER · DISCO · BRUNCH · DINNER · DISCO · BRUNCH · DINNER · DISCO · BRUNCH · DINNER · DISCO · </span></div>
   <section class="wrap story">
-    <div class="kicker">My story</div>
+    <div class="kicker">Our story</div>
     <h2>This is <span class="accent">GP's {c['name']}</span></h2>
     {story}
   </section>
