@@ -146,7 +146,7 @@ def city_page_en(key):
     return fix_amps(html)
 
 for key in ("umea","sundsvall"):
-    (ROOT/f"en/{key}/index.html").write_text(city_page_en(key))
+    (ROOT/f"en/{key}/index.html").write_text(city_page_en(key), encoding="utf-8")
 
 # --- hreflang: bidirektionella par per stad + x-default -> sv ---
 for key in ("umea","sundsvall"):
@@ -154,33 +154,33 @@ for key in ("umea","sundsvall"):
            f'<link rel="alternate" hreflang="en" href="https://www.guiltypleasure.se/en/{key}/">\n'
            f'<link rel="alternate" hreflang="x-default" href="https://www.guiltypleasure.se/{key}/">')
     for f in (f"{key}/index.html", f"en/{key}/index.html"):
-        p=(ROOT/f); s=p.read_text()
+        p=(ROOT/f); s=p.read_text(encoding="utf-8")
         if 'hreflang' not in s:
-            p.write_text(s.replace('<link rel="canonical"', tag+'\n<link rel="canonical"'))
+            p.write_text(s.replace('<link rel="canonical"', tag+'\n<link rel="canonical"'), encoding="utf-8")
 
 # --- EN-hubben ska peka på EN-städerna (nav + CTA-knappar) ---
-p=(ROOT/"en/index.html"); s=p.read_text()
+p=(ROOT/"en/index.html"); s=p.read_text(encoding="utf-8")
 if 'href="umea/index.html"' not in s:
     s=s.replace('href="../umea/index.html"','href="umea/index.html"').replace('href="../sundsvall/index.html"','href="sundsvall/index.html"')
-    p.write_text(s)
+    p.write_text(s, encoding="utf-8")
 
 # --- sitemap ---
-sm=(ROOT/"sitemap.xml").read_text()
+sm=(ROOT/"sitemap.xml").read_text(encoding="utf-8")
 for key in ("umea","sundsvall"):
     if f"/en/{key}/" not in sm:
         sm=sm.replace("</urlset>",f'  <url><loc>https://www.guiltypleasure.se/en/{key}/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>\n</urlset>')
-(ROOT/"sitemap.xml").write_text(sm)
+(ROOT/"sitemap.xml").write_text(sm, encoding="utf-8")
 
 # --- verifiering ---
 for key in ("umea","sundsvall"):
-    s=(ROOT/f"en/{key}/index.html").read_text()
+    s=(ROOT/f"en/{key}/index.html").read_text(encoding="utf-8")
     blocks=re.findall(r'<script type="application/ld\+json">(.*?)</script>', s, re.S)
     for b in blocks: json.loads(b)
     words=len(re.sub(r'<[^>]+>',' ', (UMEA_STORY_EN if key=="umea" else SUNDSVALL_STORY_EN)).split())
     assert 'lang="en"' in s and "tel:" not in s and "hreflang" in s and "Öppet nu" not in s
     assert '../../meny/index.html' in s and 'stickycta' in s
     assert words>=350, f"story {key}: {words} ord"
-    sv=(ROOT/f"{key}/index.html").read_text()
+    sv=(ROOT/f"{key}/index.html").read_text(encoding="utf-8")
     assert f'hreflang="en" href="https://www.guiltypleasure.se/en/{key}/"' in sv
     print(f"en/{key}/index.html: {len(s)//1024} KB · {len(blocks)} schema OK · story {words} ord · hreflang par OK")
-print("sitemap-URL:er:", sm.count("<loc>"), "· EN-hubb -> EN-städer:", 'href="umea/index.html"' in (ROOT/"en/index.html").read_text())
+print("sitemap-URL:er:", sm.count("<loc>"), "· EN-hubb -> EN-städer:", 'href="umea/index.html"' in (ROOT/"en/index.html").read_text(encoding="utf-8"))

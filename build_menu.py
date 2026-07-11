@@ -198,14 +198,14 @@ html = head(title,desc,"/meny/",extra_schema=schema,fontpath="../fonts/",og="og-
 </main>
 """ + footer("../")
 from build import fix_amps
-(ROOT/"meny/index.html").write_text(fix_amps(html))
+(ROOT/"meny/index.html").write_text(fix_amps(html), encoding="utf-8")
 
 # --- patcha övriga sidor: nav-länk till menyn + rätta signaturpriser ---
 def patch(p, repl):
-    f=(ROOT/p); s=f.read_text(); changed=False
+    f=(ROOT/p); s=f.read_text(encoding="utf-8"); changed=False
     for a,b in repl:
         if a in s: s=s.replace(a,b); changed=True
-    f.write_text(s); return changed
+    f.write_text(s, encoding="utf-8"); return changed
 
 price_fix = [
   ('Hela menyn får du på plats — den byter skepnad med säsongen.',
@@ -221,18 +221,18 @@ for p,menypath,navlabel in (("index.html","meny/index.html","Meny"),
     patch(p, nav_add + [(a, b.replace("MENYPATH",menypath)) for a,b in price_fix])
 
 # sitemap + verifiering
-sm=(ROOT/"sitemap.xml").read_text()
+sm=(ROOT/"sitemap.xml").read_text(encoding="utf-8")
 if "/meny/" not in sm:
     sm=sm.replace("</urlset>",'  <url><loc>https://www.guiltypleasure.se/meny/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>\n</urlset>')
-    (ROOT/"sitemap.xml").write_text(sm)
+    (ROOT/"sitemap.xml").write_text(sm, encoding="utf-8")
 
-s=(ROOT/"meny/index.html").read_text()
+s=(ROOT/"meny/index.html").read_text(encoding="utf-8")
 for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', s, re.S): json.loads(b)
 assert "Ghost of Prince" in s and "Barolo" in s and "tel:" not in s
 n_items = sum(len(i) for _,i in MAT+BAR)
 print(f"meny/index.html: {len(s)//1024} KB · {n_items} rätter/drycker · schema OK · sitemap {'/meny/' in sm}")
 for p in ("index.html","umea/index.html","sundsvall/index.html","en/index.html"):
-    t=(ROOT/p).read_text()
+    t=(ROOT/p).read_text(encoding="utf-8")
     ok_nav = "meny/index.html" in t
     ok_price = 'price">149' in t and '159' not in t
     ok_foot = ("Se hela menyn" in t) or ("See the full menu" in t)
