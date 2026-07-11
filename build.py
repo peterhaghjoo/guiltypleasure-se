@@ -48,104 +48,259 @@ QA_CONTRAST = {
     "mossa/disco": ratio(MOSSA,DISCO),
 }
 
+# Kontraktet mellan designen och WCAG. Varje par som FAKTISKT används i CSS:en
+# står här med sitt krav. Bygget failar om någon kombination underskrider det.
+#   4.5 = brödtext (normal storlek)
+#   3.0 = stor text (>=18,66px fet) och UI-element/ramar
+QA_REQUIRED = [
+    ("brödtext mossa på grädde",      ratio(MOSSA, GRADDE), 4.5),
+    ("brödtext grädde på mossa",      ratio(GRADDE, MOSSA), 4.5),
+    ("brödtext mossa på disco",       ratio(MOSSA, DISCO),  4.5),  # hundsektionen
+    ("disco på mossa (kicker, pris)", ratio(DISCO, MOSSA),  4.5),
+    ("STOR eld på grädde (h1, pris)", ratio(ELD, GRADDE),   3.0),
+    ("STOR grädde på eld (ortkort)",  ratio(GRADDE, ELD),   3.0),
+]
+
 CSS = """
-  :root{--night:#24270e;--night-2:#2e321a;--cream:#fff8eb;--pink:#ff99ff;--flame:#ff450a;--maxw:1080px}
+  /* ==========================================================================
+     GP:s designsystem — portat från den godkända Claude Design-mockupen
+     (guilty-pleasure-cafe/src/styles/design.css + tokens.css), 2026-07-11.
+
+     GRUNDYTAN ÄR GRÄDDE, INTE MOSSA. Manualen (CLAUDE.md) säger: Grädde är
+     bakgrund, Mossa är text. Sajten körde tvärtom — mörk botten, ljus text.
+     Det är rättat här; allt annat i systemet hänger på den vändningen.
+
+     KONTRASTREGLER (verifieras av QA_CONTRAST i bygget):
+     - Brödtext: Mossa på Grädde (14,49:1) eller Grädde på Mossa (14,49:1).
+     - Eld på Grädde = 3,25:1 → ENDAST stor text (>=18,66px fet) och UI-element.
+       Aldrig löptext. Därför är .price satt till 19px fet — då kvalar den som
+       stor text och får bära Eld.
+     - Disco på Mossa = 8,20:1 → fritt fram, även liten text.
+     - Aldrig två starka färger (Eld + Disco) i samma element.
+     ========================================================================== */
+  :root{
+    --moss:#24270e;--moss-2:#424d1b;--cream:#fff8eb;--disco:#ff99ff;--fire:#ff450a;
+    --line:rgba(36,39,14,.18);--line-cream:rgba(255,248,235,.22);--maxw:1080px;
+    --display:"Guilty Pleasure","GP Fallback A","GP Fallback B","Arial Black",sans-serif;
+    --body:"PP Neue Montreal","Montreal Fallback","Arial","Helvetica",sans-serif;
+  }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{background:var(--night);color:var(--cream);font:16px/1.6 "PP Neue Montreal","Montreal Fallback","Arial","Helvetica",sans-serif}
+  body{background:var(--cream);color:var(--moss);font:16px/1.65 var(--body);overflow-x:hidden}
   img,svg{max-width:100%;height:auto}
   a{color:inherit;text-decoration:underline;text-decoration-thickness:.08em;text-underline-offset:.18em}
-  a:hover{color:var(--pink)}
+  a:hover{color:var(--fire)}
+
+  /* ---- Helbreddsytor -------------------------------------------------------
+     box-shadow + clip-path målar färgen ut till skärmkanten utan att röra
+     layouten och utan att skapa horisontell scroll. Sektionerna är .wrap
+     (max 1080px) — de behöver alltså inte struktureras om. */
+  .surf-moss,.surf-disco{position:relative}
+  .surf-moss{background:var(--moss);color:var(--cream);
+    box-shadow:0 0 0 100vmax var(--moss);clip-path:inset(0 -100vmax)}
+  .surf-disco{background:var(--disco);color:var(--moss);
+    box-shadow:0 0 0 100vmax var(--disco);clip-path:inset(0 -100vmax)}
+
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
-  .topbar{position:sticky;top:0;z-index:50;background:rgba(36,39,14,.94);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,248,235,.14)}
-  .topbar .wrap{display:flex;align-items:center;gap:16px;height:58px}
-  .wordmark{font-family:"Guilty Pleasure","GP Fallback A","GP Fallback B","Arial Black",sans-serif;font-size:22px;color:var(--pink);text-decoration:none;position:relative}
-  .wordmark:hover{color:var(--pink)}
-  nav{margin-left:auto;display:flex;gap:18px}
-  nav a{text-decoration:none;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;opacity:.9}
-  nav a:hover{opacity:1;color:var(--pink)}
+
+  /* ---- Header -------------------------------------------------------------- */
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(255,248,235,.94);
+    backdrop-filter:blur(8px);border-bottom:1.5px solid var(--line)}
+  .topbar .wrap{display:flex;align-items:center;gap:16px;height:62px}
+  .wordmark{font-family:var(--display);font-size:24px;color:var(--fire);
+    text-decoration:none;position:relative}
+  .wordmark:hover{color:var(--moss)}
+  nav{margin-left:auto;display:flex;gap:20px}
+  nav a{text-decoration:none;font-weight:700;font-size:13px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--moss)}
+  nav a:hover{color:var(--fire)}
   @media(max-width:640px){nav{gap:12px} nav a.hidem{display:none}}
-  .hero{padding:52px 0 40px;text-align:center}
-  .gp-logo{width:min(380px,68vw);color:var(--cream);display:block;margin:0 auto 6px}
-  .eyebrow{font-weight:700;font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--pink)}
-  h1{font-family:"Guilty Pleasure","GP Fallback A","GP Fallback B","Arial Black",sans-serif;font-weight:700;color:var(--pink);font-size:clamp(32px,6.2vw,62px);line-height:1.08;margin:14px auto 12px;max-width:16ch;text-wrap:balance}
-  .sub{max-width:54ch;margin:0 auto 26px;font-size:17px;opacity:.92}
+
+  /* ---- Hero + display-typografi -------------------------------------------
+     Astro-mockupen kör h1 upp till 128px. Det är hela känslan. */
+  .hero{padding:64px 0 44px;text-align:center}
+  .gp-logo{width:min(380px,68vw);color:var(--moss);display:block;margin:0 auto 10px}
+  .eyebrow{font-weight:700;font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--fire)}
+  h1{font-family:var(--display);font-weight:700;color:var(--fire);
+    font-size:clamp(42px,9vw,120px);line-height:1.02;margin:16px auto 16px;
+    max-width:15ch;text-wrap:balance}
+  .sub{max-width:56ch;margin:0 auto 28px;font-size:17.5px;color:var(--moss)}
+  .surf-moss .sub,.surf-moss p{color:var(--cream)}
+
+  /* ---- Knappar ------------------------------------------------------------- */
   .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-  .btn{display:inline-block;text-decoration:none;font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-size:14px;padding:14px 24px;border-radius:9999px;min-height:44px}
-  .btn-pink{background:var(--pink);color:var(--night)}
-  .btn-pink:hover{color:var(--night);background:var(--cream)}
-  .btn-line{border:2px solid var(--cream);color:var(--cream)}
-  .btn-fire{background:var(--pink);color:var(--night)}
-  .btn-fire:hover{color:var(--night);background:var(--cream)}
-  .marquee{border-top:2px solid var(--pink);border-bottom:2px solid var(--pink);padding:12px 0;overflow:hidden;white-space:nowrap;margin-top:30px}
-  .marquee span{display:inline-block;font-family:"Guilty Pleasure","GP Fallback A","GP Fallback B","Arial Black",sans-serif;font-size:21px;color:var(--pink);animation:roll 28s linear infinite}
+  .btn{display:inline-block;text-decoration:none;font-weight:700;letter-spacing:.05em;
+    text-transform:uppercase;font-size:14px;padding:14px 26px;border-radius:9999px;
+    min-height:44px;border:2px solid transparent;
+    transition:background .18s ease,color .18s ease,border-color .18s ease}
+  .btn-fire{background:var(--fire);color:var(--cream);border-color:var(--fire)}
+  .btn-fire:hover{background:var(--moss);border-color:var(--moss);color:var(--cream)}
+  .btn-pink{background:var(--disco);color:var(--moss);border-color:var(--disco)}
+  .btn-pink:hover{background:var(--moss);border-color:var(--moss);color:var(--cream)}
+  .btn-line{background:transparent;color:var(--moss);border-color:var(--moss)}
+  .btn-line:hover{background:var(--moss);color:var(--cream)}
+  .surf-moss .btn-line{color:var(--cream);border-color:var(--cream)}
+  .surf-moss .btn-line:hover{background:var(--cream);color:var(--moss)}
+  .surf-disco .btn-line{color:var(--moss);border-color:var(--moss)}
+
+  /* ---- Marquee: eldband ---------------------------------------------------- */
+  .marquee{background:var(--fire);color:var(--cream);padding:14px 0;overflow:hidden;
+    white-space:nowrap;margin:34px 0 0}
+  .marquee span{display:inline-block;font-family:var(--display);font-size:23px;
+    color:var(--cream);animation:roll 28s linear infinite}
   @keyframes roll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-  section{padding:56px 0}
-  .kicker{font-weight:700;font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--pink);margin-bottom:8px}
-  h2{font-family:"Guilty Pleasure","GP Fallback A","GP Fallback B","Arial Black",sans-serif;font-weight:700;font-size:clamp(27px,4.4vw,40px);color:var(--cream);margin-bottom:20px;text-wrap:balance}
-  .amp{font-family:"PP Neue Montreal","Helvetica Neue",Arial,sans-serif;font-weight:700;font-size:.92em}
-  h2 .accent{color:var(--pink)}
-  h3{font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:20px;margin-bottom:10px}
-  .acts{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+
+  /* ---- Sektioner -----------------------------------------------------------
+     OBS specificitet: sektionerna har class="wrap surf-moss", och .wrap sätter
+     padding:0 22px — en klass slår elementselektorn `section`, så vertikal-
+     paddingen försvann. Med bakgrundsfärg blir det direkt synligt (kickers
+     klistrade mot fältkanten). Därför sätts paddingen explicit på section.wrap. */
+  section{padding:64px 0}
+  section.wrap{padding:64px 22px}
+  .hero.wrap{padding:64px 22px 44px}
+  .kicker{font-weight:700;font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--fire);margin-bottom:10px}
+  .surf-moss .kicker{color:var(--disco)}
+  .surf-disco .kicker{color:var(--moss)}
+  h2{font-family:var(--display);font-weight:700;font-size:clamp(32px,5.4vw,64px);
+    color:var(--moss);margin-bottom:24px;line-height:1.05;text-wrap:balance}
+  .surf-moss h2{color:var(--cream)}
+  .amp{font-family:var(--body);font-weight:700;font-size:.92em}
+  h2 .accent{color:var(--fire)}
+  .surf-moss h2 .accent{color:var(--disco)}
+  .surf-disco h2,.surf-disco h2 .accent{color:var(--moss)}
+  h3{font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:20px;
+    margin-bottom:10px}
+
+  /* ---- Kort ---------------------------------------------------------------- */
+  .acts{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
   @media(max-width:760px){.acts{grid-template-columns:1fr}}
-  .act{background:var(--night-2);border:1px solid rgba(255,248,235,.16);border-radius:24px;padding:26px 22px;position:relative}
-  .tagpill{background:var(--pink);color:var(--night);font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;border-radius:9999px;padding:6px 14px}
-  .act .tagpill{position:absolute;top:-14px;left:20px}
-  .act h3{font-family:"Guilty Pleasure","GP Fallback A","GP Fallback B","Arial Black",sans-serif;text-transform:none;font-size:24px;color:var(--pink);margin:8px 0}
-  .act p{font-size:15px;opacity:.92}
-  .menucard{background:var(--night-2);border:2px solid var(--pink);border-radius:24px;padding:32px 28px;max-width:640px;margin:0 auto}
-  .mc-head{text-align:center;margin-bottom:18px}
+  .act{background:var(--cream);border:2px solid var(--moss);border-radius:26px;
+    padding:30px 24px;position:relative}
+  .tagpill{background:var(--moss);color:var(--cream);font-weight:700;font-size:12px;
+    letter-spacing:.1em;text-transform:uppercase;border-radius:9999px;padding:7px 15px;
+    display:inline-block}
+  .act .tagpill{position:absolute;top:-15px;left:22px}
+  .act h3{font-family:var(--display);text-transform:none;font-size:30px;color:var(--fire);
+    margin:10px 0}
+  .act p{font-size:15.5px}
+
+  /* ---- Menykort ------------------------------------------------------------ */
+  .menucard{background:var(--cream);border:2px solid var(--moss);border-radius:26px;
+    padding:34px 30px;max-width:640px;margin:0 auto}
+  .surf-moss .menucard{background:var(--moss-2);border-color:var(--disco);color:var(--cream)}
+  .mc-head{text-align:center;margin-bottom:20px}
   .mrow{padding:4px 0}
-  .mrow summary{display:flex;align-items:baseline;gap:8px;cursor:pointer;list-style:none;padding:8px 0;min-height:44px}
+  .mrow summary{display:flex;align-items:baseline;gap:8px;cursor:pointer;list-style:none;
+    padding:9px 0;min-height:44px}
   .mrow summary::-webkit-details-marker{display:none}
   .mrow b{font-weight:700;font-size:15.5px;text-transform:uppercase;letter-spacing:.02em}
-  .sig{color:var(--pink);font-family:"Guilty Pleasure","GP Fallback A","GP Fallback B","Arial Black",sans-serif;font-size:12px;text-transform:none;margin-left:6px}
-  .dots{flex:1;border-bottom:2px dotted rgba(255,248,235,.4);transform:translateY(-4px);min-width:24px}
-  .price{font-weight:700;color:var(--pink);font-size:15.5px}
-  .mrow p{font-size:13.5px;opacity:.85;padding:0 0 8px}
-  .mc-foot{text-align:center;margin-top:16px;font-size:13.5px;opacity:.8}
-  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .sig{color:var(--fire);font-family:var(--display);font-size:13px;text-transform:none;
+    margin-left:6px}
+  .surf-moss .sig{color:var(--disco)}
+  .dots{flex:1;border-bottom:2px dotted var(--line);transform:translateY(-4px);min-width:24px}
+  .surf-moss .dots{border-color:var(--line-cream)}
+  /* 19px fet = "stor text" enligt WCAG -> Eld (3,25:1) är tillåtet här. */
+  .price{font-weight:700;color:var(--fire);font-size:19px}
+  .surf-moss .price{color:var(--disco)}
+  .mrow p{font-size:14px;padding:0 0 10px;color:var(--moss)}
+  .surf-moss .mrow p{color:var(--cream)}
+  .mc-foot{text-align:center;margin-top:18px;font-size:13.5px}
+
+  /* ---- Faktakort ----------------------------------------------------------- */
+  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
   @media(max-width:760px){.facts{grid-template-columns:1fr}}
-  .fact{border:1px solid rgba(255,248,235,.16);border-radius:24px;padding:22px;background:var(--night-2)}
-  .fact h3{font-size:15px;color:var(--pink)}
-  .fact p{font-size:14.5px;opacity:.92}
-  .cities{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .fact{border:2px solid var(--moss);border-radius:26px;padding:24px;background:var(--cream)}
+  .fact h3{font-size:15px;color:var(--fire)}
+  .fact p{font-size:15px}
+
+  /* ---- Ortkort: eldblock med stadsnamnet i displaytypsnitt ------------------
+     Fyllt eldblock + gräddvit display-text = 3,25:1, godkänt för stor text.
+     Statuspillret (.cstatus) är gräddvitt med mossatext (14,49:1) så det håller
+     även som liten text ovanpå elden. */
+  .cities{display:grid;grid-template-columns:1fr 1fr;gap:24px}
   @media(max-width:820px){.cities{grid-template-columns:1fr}}
-  .city{background:var(--night-2);border:1px solid rgba(255,248,235,.18);border-radius:24px;padding:28px 26px;display:flex;flex-direction:column;gap:10px}
-  .city h3{font-family:"Guilty Pleasure","GP Fallback A","GP Fallback B","Arial Black",sans-serif;text-transform:none;font-size:26px;color:var(--pink);margin:0}
-  .cstatus{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:9999px;border:1.5px solid var(--cream);color:var(--cream);white-space:nowrap;display:inline-block}
-  .cstatus.open{border-color:var(--pink);color:var(--pink)}
-  .cstatus.closed{border-color:var(--flame);color:var(--cream);background:rgba(255,69,10,.18)}
-  table.hours{width:100%;border-collapse:collapse;font-size:14.5px;margin:8px 0}
-  table.hours td{padding:8px 0;border-bottom:1px solid rgba(255,248,235,.12)}
+  .city{background:var(--cream);border:2px solid var(--moss);border-radius:28px;
+    overflow:hidden;display:flex;flex-direction:column}
+  .city h3{font-family:var(--display);text-transform:none;
+    font-size:clamp(34px,4.6vw,54px);line-height:1.05;
+    background:var(--fire);color:var(--cream);margin:0;padding:26px 26px 22px;
+    display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .city > :not(h3){margin-left:26px;margin-right:26px}
+  .city > p{margin-top:20px;font-size:15.5px}
+  .city .cta-row{justify-content:flex-start;margin:14px 0 26px}
+  .cstatus{font-family:var(--body);font-size:12px;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;padding:6px 13px;border-radius:9999px;
+    background:var(--cream);color:var(--moss);white-space:nowrap;display:inline-block}
+  .cstatus.closed{background:var(--moss);color:var(--cream)}
+
+  /* ---- Infokort (stadssidans "Praktiskt": adress + öppettider) --------------
+     Egen klass, INTE .city — där är h3 ett stort eldblock med stadsnamnet,
+     och en gatuadress i 54px displaytypsnitt vore bara löjligt. */
+  .infocard{background:var(--cream);border:2px solid var(--moss);border-radius:26px;
+    padding:28px 26px}
+  .infocard h3{font-family:var(--body);font-size:15px;color:var(--fire);
+    text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+  .infocard p{font-size:15.5px;margin-bottom:8px}
+
+  /* ---- Öppettider ---------------------------------------------------------- */
+  table.hours{width:100%;border-collapse:collapse;font-size:15px;margin:14px 0}
+  table.hours td{padding:9px 0;border-bottom:1px solid var(--line)}
   table.hours td:last-child{text-align:right;font-weight:700}
-  table.hours tr.today td{color:var(--pink);font-weight:700}
-  table.hours caption{text-align:left;font-weight:700;text-transform:uppercase;font-size:12.5px;letter-spacing:.1em;padding-bottom:6px;color:var(--pink)}
-  .faq details{border:1px solid rgba(255,248,235,.16);border-radius:16px;background:var(--night-2);margin-bottom:10px}
-  .faq summary{cursor:pointer;font-weight:700;padding:16px 18px;list-style:none;min-height:44px;font-size:15.5px}
+  table.hours tr.today td{color:var(--fire);font-weight:700}
+  .surf-moss table.hours td{border-color:var(--line-cream)}
+  .surf-moss table.hours tr.today td{color:var(--disco)}
+
+  /* ---- FAQ ----------------------------------------------------------------- */
+  .faq details{border:2px solid var(--moss);border-radius:18px;background:var(--cream);
+    margin-bottom:12px}
+  .faq summary{cursor:pointer;font-weight:700;padding:17px 20px;list-style:none;
+    min-height:44px;font-size:15.5px;text-transform:uppercase;letter-spacing:.02em}
   .faq summary::-webkit-details-marker{display:none}
-  .faq summary::before{content:"+ ";color:var(--pink);font-weight:700}
-  .faq details[open] summary::before{content:"– "}
-  .faq div{padding:0 18px 16px;font-size:15px;opacity:.94}
-  .story p{max-width:64ch;margin:0 0 16px;font-size:16.5px;line-height:1.65}
-  .story .lead{font-size:19px;font-weight:700}
-  .crumbs{font-size:13px;opacity:.85;padding:16px 0 0}
-  .crumbs a{text-decoration:none}
-  .stickycta{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:60;box-shadow:none;display:none}
+  .faq summary::before{content:"▸ ";color:var(--fire);font-weight:700}
+  .faq details[open] summary::before{content:"▾ "}
+  .faq div{padding:0 20px 18px;font-size:15.5px}
+
+  /* ---- Övrigt -------------------------------------------------------------- */
+  .story p{max-width:64ch;margin:0 0 18px;font-size:17px;line-height:1.7}
+  .story .lead{font-size:20px;font-weight:700}
+  .crumbs{font-size:13px;padding:18px 0 0;text-transform:uppercase;letter-spacing:.06em;
+    font-weight:700}
+  .crumbs a{text-decoration:none;color:var(--fire)}
+  .stickycta{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:60;
+    display:none}
   @media(max-width:820px){.stickycta{display:inline-block}}
-  .igband{text-align:center;background:var(--night-2);border-top:1px solid rgba(255,248,235,.14);border-bottom:1px solid rgba(255,248,235,.14)}
-  .igband p{max-width:46ch;margin:8px auto 20px;opacity:.92}
-  footer{padding:40px 0 90px;font-size:14.5px}
-  .fgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-bottom:22px}
+  .igband{text-align:center}
+  .igband p{max-width:46ch;margin:8px auto 22px}
+
+  /* ---- Hundsektion: disco-yta, mossatext (8,20:1) --------------------------- */
+  .dogs{text-align:left}
+  .dogs .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+  .dogs .chip{background:var(--moss);color:var(--cream);font-weight:700;font-size:12.5px;
+    letter-spacing:.08em;text-transform:uppercase;border-radius:9999px;padding:9px 16px}
+  .dogs p{max-width:52ch;font-size:17px}
+
+  /* ---- Footer -------------------------------------------------------------- */
+  footer{padding:52px 0 90px;font-size:15px;border-top:2px solid var(--moss);
+    margin-top:0}
+  .fgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px;margin-bottom:26px}
   @media(max-width:760px){.fgrid{grid-template-columns:1fr}}
-  footer h3{font-size:14px;color:var(--pink)}
-  footer p{opacity:.92;margin-bottom:6px}
-  footer .soc a{font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:13px;margin-right:14px}
-  .fin{text-align:center;opacity:.7;font-size:13px;margin-top:10px}
-  a:focus-visible,.btn:focus-visible,summary:focus-visible{outline:3px solid var(--pink);outline-offset:3px;border-radius:6px}
-  @media (prefers-reduced-motion:reduce){.marquee span{animation:none}.wordmark::after{animation:none!important}}
-  /* signaturanimation: diskret neonflimmer på wordmark-punkten */
-  .wordmark::after{content:"·";color:var(--flame);margin-left:2px;animation:flick 4.5s infinite}
+  footer h3{font-size:14px;color:var(--fire)}
+  footer p{margin-bottom:6px}
+  footer .soc a{font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:13px;
+    margin-right:14px}
+  .fin{text-align:center;font-size:13px;margin-top:14px;color:var(--moss)}
+
+  a:focus-visible,.btn:focus-visible,summary:focus-visible{outline:3px solid var(--fire);
+    outline-offset:3px;border-radius:6px}
+  @media (prefers-reduced-motion:reduce){
+    .marquee span{animation:none}
+    .wordmark::after{animation:none!important}
+    .btn{transition:none}
+  }
+  /* signaturanimation: diskret flimmer på wordmark-punkten */
+  .wordmark::after{content:"·";color:var(--disco);margin-left:2px;animation:flick 4.5s infinite}
   @keyframes flick{0%,92%,96%,100%{opacity:1}94%,98%{opacity:.25}}
 """
 
@@ -473,7 +628,7 @@ def city_page(key):
     <h2>Det här är <span class="accent">GP's {c['name']}</span></h2>
     {story}
   </section>
-  <section class="wrap">
+  <section class="wrap surf-moss">
     <div class="kicker">Ur baren</div>
     <h2>Signaturer <span class="accent">&amp; guilty pleasures</span></h2>
     <div class="menucard">{MENU_ROWS}</div>
@@ -482,14 +637,20 @@ def city_page(key):
     <div class="kicker">Praktiskt</div>
     <h2>Hitta hit <span class="accent">&amp; öppettider</span></h2>
     <div class="cities">
-      <div class="city">
+      <div class="infocard">
         <h3>{c['street']}, {c['postal']} {c['name']}</h3>
         <p>GP's — Guilty Pleasure Café ligger på {c['street']} i centrala {c['name']}. <a href="{c['maps']}" rel="noopener">Öppna vägbeskrivning i kartor</a>.</p>
         <p><a href="mailto:{c['email']}">{c['email']}</a></p>
-        <p style="font-size:14px;opacity:.85">{"Drop-in only — kom som du är. Bordsbokning lanseras hösten 2026." if key=="umea" else "Boka online eller kom förbi — båda funkar lika bra."}</p>
+        <p style="font-size:14px">{"Drop-in only — kom som du är. Bordsbokning lanseras hösten 2026." if key=="umea" else "Boka online eller kom förbi — båda funkar lika bra."}</p>
       </div>
-      <div class="city">{hours_table(key)}</div>
+      <div class="infocard"><h3>Öppettider</h3>{hours_table(key)}</div>
     </div>
+  </section>
+  <section class="wrap surf-disco dogs">
+    <div class="kicker">Vovven är välkommen</div>
+    <h2>Bring your dog.</h2>
+    <p>Inte bara du är välkommen — din fyrbenta bästa vän också. Hundar är alltid välkomna hos mig, och vatten står framme. Hundvänligt, alltid.</p>
+    <div class="chips"><span class="chip">Vattenskål</span><span class="chip">Hundar inne</span><span class="chip">Alltid välkomna</span></div>
   </section>
   <section class="wrap">
     <div class="kicker">Snabba svar</div>
@@ -536,7 +697,7 @@ def hub():
       <article class="act"><span class="tagpill">Akt 3</span><h3>Disco</h3><p>När mörkret faller vrider jag upp volymen. Fredagar och lördagar öppet till ett.</p></article>
     </div>
   </section>
-  <section class="wrap" id="signaturer">
+  <section class="wrap surf-moss" id="signaturer">
     <div class="kicker">Ur baren</div>
     <h2>Signaturer <span class="accent">&amp; guilty pleasures</span></h2>
     <div class="menucard">{MENU_ROWS}</div>
@@ -559,13 +720,17 @@ def hub():
       </div>
     </div>
   </section>
-  <section class="igband">
-    <div class="wrap" style="padding-top:52px;padding-bottom:52px">
-      <div class="kicker">Nästan dagligen i flödet</div>
-      <h2>Följ <span class="accent">@guiltypleasure.se</span></h2>
-      <p>Dagens rätt, nya drinkar och allt som händer efter mörkrets inbrott — det droppar först på Instagram.</p>
-      <a class="btn btn-pink" href="https://www.instagram.com/guiltypleasure.se/" rel="noopener">Följ mig på Instagram</a>
-    </div>
+  <section class="wrap surf-disco dogs">
+    <div class="kicker">Vovven är välkommen</div>
+    <h2>Bring your dog.</h2>
+    <p>Inte bara du är välkommen — din fyrbenta bästa vän också. Hundar är alltid välkomna i både Umeå och Sundsvall, och vatten står framme. Hundvänligt, alltid.</p>
+    <div class="chips"><span class="chip">Vattenskål</span><span class="chip">Hundar inne</span><span class="chip">Alltid välkomna</span></div>
+  </section>
+  <section class="wrap surf-moss igband">
+    <div class="kicker">Nästan dagligen i flödet</div>
+    <h2>Följ <span class="accent">@guiltypleasure.se</span></h2>
+    <p>Dagens rätt, nya drinkar och allt som händer efter mörkrets inbrott — det droppar först på Instagram.</p>
+    <a class="btn btn-pink" href="https://www.instagram.com/guiltypleasure.se/" rel="noopener">Följ mig på Instagram</a>
   </section>
 </main>
 """ + footer("")
@@ -680,6 +845,12 @@ if __name__ == "__main__":
         assert 'lang="sv"' in contents, p
         report.append(f"{p}: {len(contents)//1024} KB, {len(blocks)} schema-block OK")
     for k,v in QA_CONTRAST.items(): report.append(f"kontrast {k}: {v:.2f}:1")
+
+    # Brandregel-grind: varje färgpar som används måste klara sitt WCAG-krav.
+    for namn, uppmatt, krav in QA_REQUIRED:
+        status = "OK " if uppmatt >= krav else "FEL"
+        report.append(f"  [{status}] {namn}: {uppmatt:.2f}:1 (krav {krav})")
+        assert uppmatt >= krav, f"KONTRASTBROTT: {namn} = {uppmatt:.2f}:1, krävs {krav}:1"
     # ordräkning stadstexter
     import html as h
     for key,story in (("umea",UMEA_STORY),("sundsvall",SUNDSVALL_STORY)):

@@ -161,7 +161,7 @@ def build():
     </div>
   </section>
 
-  <section class="wrap" id="brunchmenyn">
+  <section class="wrap surf-moss" id="brunchmenyn">
     <div class="kicker">Lördag &amp; söndag</div>
     <h2>Brunchmenyn <span class="accent">— à la carte</span></h2>
     <p class="sub" style="margin:0 0 22px">Priser i kronor. Lägg till extra: {EXTRAS}. Allergier eller veganskt? Fråga mig, jag hjälper dig.</p>
