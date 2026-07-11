@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """EN-version + hreflang. Körs EFTER build.py: python3 build.py && python3 build_en.py"""
 import json, re, pathlib
-from build import head, topbar, footer, status_js, hours_table, CITIES, LOGO, MENU_ROWS, fix_amps
+from build import head, topbar, footer, status_js, hours_table, CITIES, LOGO, MENU_ROWS, fix_amps, website_schema
 
 ROOT = pathlib.Path(__file__).parent
 (ROOT/"en").mkdir(exist_ok=True)
@@ -36,7 +36,8 @@ def hub_en():
     org = {"@context":"https://schema.org","@type":"Organization","@id":url+"#org",
       "name":"Guilty Pleasure Café","url":"https://www.guiltypleasure.se/",
       "sameAs":["https://www.instagram.com/guiltypleasure.se/","https://www.facebook.com/gpsumea/","https://www.tiktok.com/@guiltypleasure.se"]}
-    schema='<script type="application/ld+json">'+json.dumps(org,ensure_ascii=False)+'</script>'
+    schema=('<script type="application/ld+json">'+json.dumps(org,ensure_ascii=False)+'</script>'
+            + "\n" + website_schema("en"))
     h = head(title,desc,"/en/",lang="en",extra_schema=schema,fontpath="../fonts/")
     body = (topbar("../").replace('href="../index.html"','href="index.html"',1)
             .replace(">Signaturer<",">Signatures<").replace('aria-label="Huvudmeny"','aria-label="Main menu"')) + f"""
@@ -80,7 +81,7 @@ def hub_en():
         <h3>Sundsvall <span class="cstatus" data-city="sundsvall" aria-live="polite">…</span></h3>
         <p>In the heart of Stenstan at Storgatan 12. Finger-licking good — all day, everyday. Book online or drop by.</p>
         {en_hours_table("sundsvall")}
-        <div class="cta-row" style="justify-content:flex-start"><a class="btn btn-fire" href="https://app.bokabord.se" rel="noopener">Book a table</a><a class="btn btn-line" href="{CITIES['sundsvall']['maps']}" rel="noopener">Directions</a></div>
+        <div class="cta-row" style="justify-content:flex-start"><a class="btn btn-fire" href="{CITIES['sundsvall']["booking"]}" rel="noopener">Book a table</a><a class="btn btn-line" href="{CITIES['sundsvall']['maps']}" rel="noopener">Directions</a></div>
       </div>
     </div>
   </section>

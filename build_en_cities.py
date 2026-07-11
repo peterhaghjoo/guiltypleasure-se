@@ -3,7 +3,7 @@
 """EN-stadssidor (en/umea/, en/sundsvall/) + hreflang per stad.
 Körs SIST: python3 build.py && python3 build_en.py && python3 build_menu.py && python3 build_en_cities.py"""
 import json, re, pathlib
-from build import head, topbar, footer, CITIES, rest_schema, faq_schema, faq_html, fix_amps
+from build import head, topbar, footer, CITIES, rest_schema, faq_schema, faq_html, fix_amps, breadcrumbs
 from build_en import MENU_EN, en_hours_table, en_status
 
 ROOT = pathlib.Path(__file__).parent
@@ -26,7 +26,7 @@ def en_footer():
       .replace("· karta</a>","· map</a>").replace('>karta<','>map<'))
 
 def rest_schema_en(city_key):
-    s = rest_schema(city_key, f"https://www.guiltypleasure.se/en/{city_key}/")
+    s = rest_schema(city_key, f"https://www.guiltypleasure.se/en/{city_key}/", lang="en")
     for a,b in (
         ('"Signaturer ur baren"','"Signatures from the bar"'),
         ('"Gin, viol, citron, ingefäraskum & salt"','"Gin, violet, lemon, ginger foam & salt"'),
@@ -90,7 +90,9 @@ def city_page_en(key):
     hero_h1 = "Umeå's guilty pleasure since 2021" if key=="umea" else "Finger-licking good — in the heart of Stenstan"
     hero_sub = ("I'm the flagship. Right in the city centre, at Skolgatan 62 — where cravings meet good vibes." if key=="umea"
                 else "I'm GP's in Sundsvall. Storgatan 12 — food and drinks, all day, everyday.")
-    schema = rest_schema_en(key) + "\n" + faq_schema(faqs,url)
+    crumbs = breadcrumbs([("Home","https://www.guiltypleasure.se/en/"),
+                          (c["name"], url)], url)
+    schema = rest_schema_en(key) + "\n" + faq_schema(faqs,url) + "\n" + crumbs
     cta = (f'<a class="btn btn-fire stickycta" href="{c["booking"]}" rel="noopener">Book a table</a>' if c["booking"]
            else f'<a class="btn btn-fire stickycta" href="{c["maps"]}" rel="noopener">Find us</a>')
     booking_row = (f'<a class="btn btn-pink" href="{c["booking"]}" rel="noopener">Book a table</a>' if c["booking"] else "")
