@@ -81,7 +81,7 @@ DESC_EN = {
  "Vodka, rabarber ×3, vanilj & kardemumma.":"Vodka, rhubarb ×3, vanilla & cardamom.",
  "Gin, körsbär & citrus.":"Gin, cherry & citrus.",
  "Rom, lime, jordgubbar & socker.":"Rum, lime, strawberries & sugar.",
- "Vodka, kaffelikör & espresso granita. Original / Salted Caramel / Kanelbulle.":"Vodka, coffee liqueur & espresso granita. Original / Salted Caramel / Cinnamon Bun.",
+ "Vodka, kaffelikör & espressogranita. Original / Salted Caramel / Kanelbulle.":"Vodka, coffee liqueur & espresso granita. Original / Salted Caramel / Cinnamon Bun.",
  "Rom, lime, mynta, socker & soda. Klassisk / Passion / Jordgubb.":"Rum, lime, mint, sugar & soda. Classic / Passion / Strawberry.",
  "3–6 personer. Klassisk / Passion / Jordgubb.":"3–6 people. Classic / Passion / Strawberry.",
  # Golden Hits — Ghost of Prince följer EN-konventionen från build_en.py
@@ -171,7 +171,8 @@ def en_topbar():
     # ../index.html -> /en/, ../umea/index.html -> /en/umea/ osv.
     return (topbar("../")
       .replace('aria-label="Huvudmeny"','aria-label="Main menu"')
-      .replace(">Signaturer<",">Signatures<"))
+      .replace(">Signaturer<",">Signatures<")
+      .replace("GP's — startsida","GP's — home"))
 
 def en_footer():
     # Samma översättningar som build_en_cities.py använder.
