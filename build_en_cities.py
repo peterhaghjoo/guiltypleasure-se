@@ -12,7 +12,7 @@ ROOT = pathlib.Path(__file__).parent
 
 def en_topbar():
     # topbar("../") ger redan rätt relativa mål inne i /en/<stad>/ (../index.html -> /en/)
-    t = topbar("../").replace('aria-label="Huvudmeny"','aria-label="Main menu"').replace(">Signaturer<",">Signatures<")
+    t = topbar("../").replace('aria-label="Huvudmeny"','aria-label="Main menu"').replace(">Signaturer<",">Signatures<").replace("GP's — startsida","GP's — home")
     # Menu-länken pekar på den ENGELSKA menyn: ../meny/index.html -> /en/meny/
     # (byggd av build_menu_en.py — verkstans "språkläcka" är täppt).
     t = t.replace('<a href="../umea/index.html">Umeå</a>',
