@@ -43,7 +43,8 @@ def hub_en():
             + "\n" + website_schema("en"))
     h = head(title,desc,"/en/",lang="en",extra_schema=schema,fontpath="../fonts/")
     body = (topbar("../").replace('href="../index.html"','href="index.html"',1)
-            .replace(">Signaturer<",">Signatures<").replace('aria-label="Huvudmeny"','aria-label="Main menu"')) + f"""
+            .replace(">Signaturer<",">Signatures<").replace('aria-label="Huvudmeny"','aria-label="Main menu"')
+            .replace("GP's — startsida","GP's — home")) + f"""
 <main id="top">
   <section class="hero wrap">
     {LOGO}
