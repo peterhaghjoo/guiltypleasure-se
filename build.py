@@ -27,7 +27,13 @@ ROBOTS_META = ("noindex, nofollow" if PRELAUNCH else "index, follow") + \
               ", max-snippet:-1, max-image-preview:large, max-video-preview:-1"
 
 FONT_B64 = base64.b64encode((ROOT/"fonts/gp-bold.woff2").read_bytes()).decode()
-LOGO = (ROOT/"logo.inline.svg").read_text(encoding="utf-8")
+# Officiella varumärkeslockuper (brand-teamets Drive). fill="currentColor" gör
+# dem OMFÄRGBARA -> de ärver textfärgen och får rätt kulör per yta automatiskt.
+# logo-mark = GP's-symbolen (header), logo-cafe = fulla "Guilty Pleasure Café"-
+# lockupen (hero), logo-stacked committas för framtida bruk. Path-datan är
+# designens SANNING och rörs aldrig — bara färgmekanismen + viewBox-cropen.
+MARK = (ROOT/"logo-mark.svg").read_text(encoding="utf-8")
+LOGO = (ROOT/"logo-cafe.svg").read_text(encoding="utf-8").replace("<svg ", '<svg class="gp-logo" ', 1)
 
 # ---------- kontrastberäkning (kvalitetsgrind) ----------
 def lum(hexc):
@@ -61,6 +67,43 @@ QA_REQUIRED = [
     ("STOR grädde på eld (ortkort)",  ratio(GRADDE, ELD),   3.0),
 ]
 
+# ---- A11y-BINDNINGAR: selector -> färgpar -> storlekskrav ---------------------
+# Lighthouse-baseline 2026-07-11 hittade eldfärgad LITEN text (3,25:1 < 4,5:1)
+# på fyra ställen efter designportningen: dagens rad i öppettiderna, brödsmule-
+# länken, footer-rubrikerna och infokorts-/faktakortsrubrikerna (94-95 i a11y,
+# skulle vara 100). QA_REQUIRED räckte inte — den mäter abstrakta färgpar men
+# band dem aldrig till faktiska textstorlekar. Det är exakt hålet NATTRAPPORT
+# beskrev. Bindningarna görs här: grinden failar om (a) den fixade CSS-
+# deklarationen försvinner, (b) den gamla regressionen kommer tillbaka, eller
+# (c) färgparet inte längre klarar kravet för sin storlek.
+def wcag_krav(px, fet):
+    """WCAG-tröskel: stor text (>=24px, eller >=18.66px fet) = 3.0:1, annars 4.5:1.
+    px=None betyder icke-text (grafik/UI, SC 1.4.11) = 3.0:1."""
+    if px is None: return 3.0
+    return 3.0 if (px >= 24 or (fet and px >= 18.66)) else 4.5
+
+QA_BOUND = [
+    # (namn, css som MÅSTE finnas, css som ALDRIG får återvända, fg, bg, px, fet)
+    ("hours dagens rad: fet text i arvsfärg",
+     "table.hours tr.today td{font-weight:700}",
+     "table.hours tr.today td{color:var(--fire)", MOSSA, GRADDE, 15, True),
+    ("hours dagens rad: eld-punkt som GRAFIK (1.4.11)",
+     "table.hours tr.today td:first-child::before{background:var(--fire)}",
+     None, ELD, GRADDE, None, False),
+    ("brödsmulelänk: mossa + understrykning (13px liten text)",
+     ".crumbs a{text-decoration:underline;color:var(--moss)}",
+     ".crumbs a{text-decoration:none;color:var(--fire)}", MOSSA, GRADDE, 13, True),
+    ("footer h3: eld i 19px fet (stor text)",
+     "footer h3{font-size:19px;color:var(--fire)}",
+     "footer h3{font-size:14px", ELD, GRADDE, 19, True),
+    (".infocard h3: eld i 19px fet (stor text)",
+     ".infocard h3{font-family:var(--body);font-size:19px;color:var(--fire);",
+     ".infocard h3{font-family:var(--body);font-size:15px", ELD, GRADDE, 19, True),
+    (".fact h3: eld i 19px fet (stor text)",
+     ".fact h3{font-size:19px;color:var(--fire)}",
+     ".fact h3{font-size:15px", ELD, GRADDE, 19, True),
+]
+
 CSS = """
   /* ==========================================================================
      GP:s designsystem — portat från den godkända Claude Design-mockupen
@@ -83,15 +126,19 @@ CSS = """
     --line:rgba(36,39,14,.18);--line-cream:rgba(255,248,235,.22);--maxw:1080px;
     --display:"Guilty Pleasure","GP Fallback A","GP Fallback B","Arial Black",sans-serif;
     --body:"PP Neue Montreal","Montreal Fallback","Arial","Helvetica",sans-serif;
+    /* Tracking-tokens = manualens typ-tabell (§3). Adobe-tracking / 1000 = em:
+       Headline 0 · Alternativ rubrik 20 · Underrubrik/Ingress 40 · Brödtext 40.
+       Används konsekvent nedan — inga letter-spacing utanför {0,.02em,.04em}. */
+    --track-display:0;--track-alt:.02em;--track-ingress:.04em;--track-body:.04em;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
     /* Manualen s.13: BRÖDTEXT = PP Neue Montreal Medium, Tracking 40.
      Tracking 40 i Adobe-enheter = 0.04em i CSS. Låg på 0 — nu rättat. */
   body{background:var(--cream);color:var(--moss);font:500 16px/1.65 var(--body);
-    letter-spacing:.04em;overflow-x:hidden}
+    letter-spacing:var(--track-body);overflow-x:hidden}
   /* Display-rubriker ska ha Tracking 0 (manualen s.13) — neutralisera arvet. */
-  h1,h2,.wordmark,.marquee span,.act h3,.city h3{letter-spacing:0}
+  h1,h2,.marquee span,.act h3,.city h3{letter-spacing:var(--track-display)}
   img,svg{max-width:100%;height:auto}
   a{color:inherit;text-decoration:underline;text-decoration-thickness:.08em;text-underline-offset:.18em}
   a:hover{color:var(--fire)}
@@ -112,11 +159,14 @@ CSS = """
   .topbar{position:sticky;top:0;z-index:50;background:rgba(255,248,235,.94);
     backdrop-filter:blur(8px);border-bottom:1.5px solid var(--line)}
   .topbar .wrap{display:flex;align-items:center;gap:16px;height:62px}
-  .wordmark{font-family:var(--display);font-size:24px;color:var(--fire);
-    text-decoration:none;position:relative}
-  .wordmark:hover{color:var(--moss)}
+  /* Header: officiella GP's-MÄRKET (logo-mark.svg) inline, ~34px, eld på grädde
+     via currentColor. Ersätter den gamla textbaserade .wordmark. */
+  .brandmark{display:inline-flex;align-items:center;color:var(--fire);
+    text-decoration:none;line-height:0}
+  .brandmark svg{height:34px;width:auto;display:block}
+  .brandmark:hover{color:var(--moss)}
   nav{margin-left:auto;display:flex;gap:20px}
-  nav a{text-decoration:none;font-weight:700;font-size:13px;letter-spacing:.06em;
+  nav a{text-decoration:none;font-weight:700;font-size:13px;letter-spacing:var(--track-alt);
     text-transform:uppercase;color:var(--moss)}
   nav a:hover{color:var(--fire)}
   @media(max-width:640px){nav{gap:12px} nav a.hidem{display:none}}
@@ -124,10 +174,13 @@ CSS = """
   /* ---- Hero + display-typografi -------------------------------------------
      Astro-mockupen kör h1 upp till 128px. Det är hela känslan. */
   .hero{padding:64px 0 44px;text-align:center}
-  .gp-logo{width:min(380px,68vw);color:var(--moss);display:block;margin:0 auto 10px}
+  /* Hero: fulla "Guilty Pleasure Café"-lockupen (logo-cafe.svg), eld på grädde
+     via currentColor, responsiv bredd. margin ger clearspace (~⅓ logohöjd luft
+     under, manualen §5); hero-paddingen ger luften ovanför. */
+  .gp-logo{width:min(440px,74vw);color:var(--fire);display:block;margin:0 auto 20px}
   /* 19px FET = "stor text" enligt WCAG -> 3,0:1-tröskeln gäller -> Eld (3,25:1) OK.
      På 12,5px hade den krävt 4,5:1 och fallit. Storleken är inte kosmetik, den är kravet. */
-  .eyebrow{font-weight:700;font-size:19px;letter-spacing:.18em;text-transform:uppercase;
+  .eyebrow{font-weight:700;font-size:19px;letter-spacing:var(--track-ingress);text-transform:uppercase;
     color:var(--fire)}
   h1{font-family:var(--display);font-weight:700;color:var(--fire);
     font-size:clamp(42px,9vw,120px);line-height:1.02;margin:16px auto 16px;
@@ -169,7 +222,7 @@ CSS = """
   section.wrap{padding:64px 22px}
   .hero.wrap{padding:64px 22px 44px}
   /* Samma skäl som .eyebrow: Eld kräver stor text. 19px fet. */
-  .kicker{font-weight:700;font-size:19px;letter-spacing:.18em;text-transform:uppercase;
+  .kicker{font-weight:700;font-size:19px;letter-spacing:var(--track-ingress);text-transform:uppercase;
     color:var(--fire);margin-bottom:12px}
   .surf-moss .kicker{color:var(--disco)}
   .surf-disco .kicker{color:var(--moss)}
@@ -180,7 +233,7 @@ CSS = """
   h2 .accent{color:var(--fire)}
   .surf-moss h2 .accent{color:var(--disco)}
   .surf-disco h2,.surf-disco h2 .accent{color:var(--moss)}
-  h3{font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:20px;
+  h3{font-weight:700;text-transform:uppercase;letter-spacing:var(--track-alt);font-size:20px;
     margin-bottom:10px}
 
   /* ---- Kort ---------------------------------------------------------------- */
@@ -189,7 +242,7 @@ CSS = """
   .act{background:var(--cream);border:2px solid var(--moss);border-radius:26px;
     padding:30px 24px;position:relative}
   .tagpill{background:var(--moss);color:var(--cream);font-weight:700;font-size:12px;
-    letter-spacing:.1em;text-transform:uppercase;border-radius:9999px;padding:7px 15px;
+    letter-spacing:var(--track-alt);text-transform:uppercase;border-radius:9999px;padding:7px 15px;
     display:inline-block}
   .act .tagpill{position:absolute;top:-15px;left:22px}
   .act h3{font-family:var(--display);text-transform:none;font-size:30px;color:var(--fire);
@@ -205,7 +258,7 @@ CSS = """
   .mrow summary{display:flex;align-items:baseline;gap:8px;cursor:pointer;list-style:none;
     padding:9px 0;min-height:44px}
   .mrow summary::-webkit-details-marker{display:none}
-  .mrow b{font-weight:700;font-size:15.5px;text-transform:uppercase;letter-spacing:.02em}
+  .mrow b{font-weight:700;font-size:15.5px;text-transform:uppercase;letter-spacing:var(--track-alt)}
   .sig{color:var(--fire);font-family:var(--display);font-size:13px;text-transform:none;
     margin-left:6px}
   .surf-moss .sig{color:var(--disco)}
@@ -222,7 +275,7 @@ CSS = """
   .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
   @media(max-width:760px){.facts{grid-template-columns:1fr}}
   .fact{border:2px solid var(--moss);border-radius:26px;padding:24px;background:var(--cream)}
-  .fact h3{font-size:15px;color:var(--fire)}
+  .fact h3{font-size:19px;color:var(--fire)}  /* 19px fet = stor text -> eld OK */
   .fact p{font-size:15px}
 
   /* ---- Ortkort: eldblock med stadsnamnet i displaytypsnitt ------------------
@@ -240,7 +293,7 @@ CSS = """
   .city > :not(h3){margin-left:26px;margin-right:26px}
   .city > p{margin-top:20px;font-size:15.5px}
   .city .cta-row{justify-content:flex-start;margin:14px 0 26px}
-  .cstatus{font-family:var(--body);font-size:12px;font-weight:700;letter-spacing:.08em;
+  .cstatus{font-family:var(--body);font-size:12px;font-weight:700;letter-spacing:var(--track-alt);
     text-transform:uppercase;padding:6px 13px;border-radius:9999px;
     background:var(--cream);color:var(--moss);white-space:nowrap;display:inline-block}
   .cstatus.closed{background:var(--moss);color:var(--cream)}
@@ -250,15 +303,25 @@ CSS = """
      och en gatuadress i 54px displaytypsnitt vore bara löjligt. */
   .infocard{background:var(--cream);border:2px solid var(--moss);border-radius:26px;
     padding:28px 26px}
-  .infocard h3{font-family:var(--body);font-size:15px;color:var(--fire);
-    text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+  /* 19px fet = stor text -> eld (3,25:1) klarar 3,0:1-kravet. På 15px föll den. */
+  .infocard h3{font-family:var(--body);font-size:19px;color:var(--fire);
+    text-transform:uppercase;letter-spacing:var(--track-alt);margin-bottom:14px}
   .infocard p{font-size:15.5px;margin-bottom:8px}
 
   /* ---- Öppettider ---------------------------------------------------------- */
   table.hours{width:100%;border-collapse:collapse;font-size:15px;margin:14px 0}
   table.hours td{padding:9px 0;border-bottom:1px solid var(--line)}
   table.hours td:last-child{text-align:right;font-weight:700}
-  table.hours tr.today td{color:var(--fire);font-weight:700}
+  /* Dagens rad: FET text i ytans arvsfärg + eld-PUNKT (grafik, inte text).
+     Eld på grädde är 3,25:1 och får INTE bära liten text (kravet är 4,5:1) —
+     det var Lighthouse-regressionen 2026-07-11. Punkten är icke-text: SC 1.4.11
+     kräver 3,0:1, och 3,25:1 klarar det. Fetstilen gör att signalen inte hänger
+     på färg ensam (SC 1.4.1). En osynlig punkt reserveras på ALLA rader så att
+     .today (sätts av JS efter load) inte knuffar layouten — noll CLS. */
+  table.hours td:first-child::before{content:"";display:inline-block;width:8px;height:8px;
+    border-radius:50%;background:transparent;margin-right:8px;vertical-align:1px}
+  table.hours tr.today td{font-weight:700}
+  table.hours tr.today td:first-child::before{background:var(--fire)}
   .surf-moss table.hours td{border-color:var(--line-cream)}
   .surf-moss table.hours tr.today td{color:var(--disco)}
 
@@ -266,7 +329,7 @@ CSS = """
   .faq details{border:2px solid var(--moss);border-radius:18px;background:var(--cream);
     margin-bottom:12px}
   .faq summary{cursor:pointer;font-weight:700;padding:17px 20px;list-style:none;
-    min-height:44px;font-size:15.5px;text-transform:uppercase;letter-spacing:.02em}
+    min-height:44px;font-size:15.5px;text-transform:uppercase;letter-spacing:var(--track-alt)}
   .faq summary::-webkit-details-marker{display:none}
   .faq summary::before{content:"▸ ";color:var(--fire);font-weight:700}
   .faq details[open] summary::before{content:"▾ "}
@@ -275,9 +338,13 @@ CSS = """
   /* ---- Övrigt -------------------------------------------------------------- */
   .story p{max-width:64ch;margin:0 0 18px;font-size:17px;line-height:1.7}
   .story .lead{font-size:20px;font-weight:700}
-  .crumbs{font-size:13px;padding:18px 0 0;text-transform:uppercase;letter-spacing:.06em;
+  .crumbs{font-size:13px;padding:18px 0 0;text-transform:uppercase;letter-spacing:var(--track-alt);
     font-weight:700}
-  .crumbs a{text-decoration:none;color:var(--fire)}
+  /* Länkkonvention i stället för eldfärg: 13px är liten text, och eld på
+     grädde (3,25:1) faller under 4,5:1-kravet. Mossa + understrykning — även
+     vid hover, eftersom hover-tillstånd inte undantas av WCAG. */
+  .crumbs a{text-decoration:underline;color:var(--moss)}
+  .crumbs a:hover{color:var(--moss)}
   .stickycta{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:60;
     display:none}
   @media(max-width:820px){.stickycta{display:inline-block}}
@@ -288,7 +355,7 @@ CSS = """
   .dogs{text-align:left}
   .dogs .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
   .dogs .chip{background:var(--moss);color:var(--cream);font-weight:700;font-size:12.5px;
-    letter-spacing:.08em;text-transform:uppercase;border-radius:9999px;padding:9px 16px}
+    letter-spacing:var(--track-alt);text-transform:uppercase;border-radius:9999px;padding:9px 16px}
   .dogs p{max-width:52ch;font-size:17px}
 
   /* ---- Footer -------------------------------------------------------------- */
@@ -296,9 +363,10 @@ CSS = """
     margin-top:0}
   .fgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px;margin-bottom:26px}
   @media(max-width:760px){.fgrid{grid-template-columns:1fr}}
-  footer h3{font-size:14px;color:var(--fire)}
+  /* 19px fet = stor text -> 3,0:1 gäller -> eld (3,25:1) OK. På 14px föll den. */
+  footer h3{font-size:19px;color:var(--fire)}
   footer p{margin-bottom:6px}
-  footer .soc a{font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:13px;
+  footer .soc a{font-weight:700;text-transform:uppercase;letter-spacing:var(--track-alt);font-size:13px;
     margin-right:14px}
   .fin{text-align:center;font-size:13px;margin-top:14px;color:var(--moss)}
 
@@ -338,7 +406,7 @@ CITIES = {
     hours_js="{1:[690,1320],2:[690,1440],3:[690,1440],4:[690,1440],5:[690,1500],6:[690,1500],0:[690,1320]}",
     hours_schema=[["Monday","Monday","11:30","22:00"],["Tuesday","Thursday","11:30","00:00"],["Friday","Saturday","11:30","01:00"],["Sunday","Sunday","11:30","22:00"]],
     hero_h1="Umeås guilty pleasure sedan 2021",
-    hero_sub="Jag är flaggskeppet. Mitt i stan, på Skolgatan 62 — där cravings möter good vibes.",
+    hero_sub="Vi är flaggskeppet. Mitt i stan, på Skolgatan 62 — där cravings möter good vibes.",
   ),
   "sundsvall": dict(
     name="Sundsvall", street="Storgatan 12", postal="852 31", email="sundsvall@guiltypleasure.se",
@@ -349,13 +417,13 @@ CITIES = {
     hours_js="{1:[660,1320],2:[660,1320],3:[660,1440],4:[660,1440],5:[660,1500],6:[660,1500],0:[660,1320]}",
     hours_schema=[["Monday","Tuesday","11:00","22:00"],["Wednesday","Thursday","11:00","00:00"],["Friday","Saturday","11:00","01:00"],["Sunday","Sunday","11:00","22:00"]],
     hero_h1="Finger-licking good — mitt i Stenstan",
-    hero_sub="Jag är GP's i Sundsvall. Storgatan 12 — food and drinks, all day, everyday.",
+    hero_sub="Vi är GP's i Sundsvall. Storgatan 12 — food and drinks, all day, everyday.",
   ),
 }
 
 MENU_ROWS = """
       <div class="mc-head"><span class="tagpill">Ur baren</span></div>
-      <details class="mrow"><summary><b>Ghost of Prince</b><span class="sig">signature</span><span class="dots"></span><span class="price">149</span></summary><p>Gin, viol, citron, ingefäraskum &amp; salt. Min stolthet — börja här.</p></details>
+      <details class="mrow"><summary><b>Ghost of Prince</b><span class="sig">signature</span><span class="dots"></span><span class="price">149</span></summary><p>Gin, viol, citron, ingefäraskum &amp; salt. Vår stolthet — börja här.</p></details>
       <details class="mrow"><summary><b>Frozen Blood Orange Mimosa</b><span class="dots"></span><span class="price">119</span></summary><p>Blodapelsinsorbet, fläder &amp; cava. Brunchens bästa vän.</p></details>
       <details class="mrow"><summary><b>Spicy Margarita</b><span class="dots"></span><span class="price">139</span></summary><p>Tequila, jalapeño &amp; lime. Den bits — lagom mycket.</p></details>
       <details class="mrow"><summary><b>Coffee Granita</b><span class="dots"></span><span class="price">139</span></summary><p>Vodka, kaffelikör &amp; espressogranita — välj Original, Salted Caramel eller Kanelbulle.</p></details>
@@ -410,7 +478,7 @@ def topbar(base=""):
     return f"""
 <header class="topbar">
   <div class="wrap">
-    <a class="wordmark" href="{base}index.html">GP's</a>
+    <a class="brandmark" href="{base}index.html" aria-label="GP's — startsida">{MARK}</a>
     <nav aria-label="Huvudmeny">
       <a href="{base}index.html#signaturer" class="hidem">Signaturer</a>
       <a href="{base}umea/index.html">Umeå</a>
@@ -437,7 +505,7 @@ def footer(base=""):
         <p><a href="{CITIES['sundsvall']["booking"]}" rel="noopener">Boka bord online</a> — eller kom förbi.</p>
       </div>
       <div>
-        <h3>Häng med mig</h3>
+        <h3>Häng med oss</h3>
         <p class="soc"><a href="https://www.instagram.com/guiltypleasure.se/" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@guiltypleasure.se" rel="noopener">TikTok</a><a href="https://www.facebook.com/gpsumea/" rel="noopener">Facebook</a></p>
         <p>Ingen telefon än — maila oss eller skicka DM på Instagram.</p>
       </div>
@@ -565,29 +633,29 @@ def faq_html(qas):
 
 # ---------------- STADSSIDOR ----------------
 UMEA_STORY = """
-<p class="lead">Jag öppnade på Skolgatan 62 år 2021 med en enkel idé: Umeå förtjänade ett ställe där brunchen inte tar slut bara för att klockan gör det.</p>
-<p>Sedan dess har jag varit stans New York-inspirerade comfort bistro — flaggskeppet i Guilty Pleasure-familjen. Hos mig börjar dagen med frozen mimosas och comfort-klassiker, glider över i middag när eftermiddagen tröttnat, och slutar på helgerna i något som bäst beskrivs som disco. Fredagar och lördagar håller jag igång till klockan ett, och ja — det märks.</p>
+<p class="lead">Vi öppnade på Skolgatan 62 år 2021 med en enkel idé: Umeå förtjänade ett ställe där brunchen inte tar slut bara för att klockan gör det.</p>
+<p>Sedan dess har vi varit stans New York-inspirerade comfort bistro — flaggskeppet i Guilty Pleasure-familjen. Hos oss börjar dagen med frozen mimosas och comfort-klassiker, glider över i middag när eftermiddagen tröttnat, och slutar på helgerna i något som bäst beskrivs som disco. Fredagar och lördagar håller vi igång till klockan ett, och ja — det märks.</p>
 <p>Du hittar oss mitt i centrala Umeå, på Skolgatan 62. Kommer du med hunden? Ta med den in. Kommer du med ett stort gäng en lördag? Kom tidigt — vi kör drop-in only, först till kvarn, och det är en princip vi är stolta över: livet är för kort för tomma bord som väntar på folk som inte dyker upp.</p>
-<p>Baren är min scen. Signaturen heter Ghost of Prince — gin, viol, citron, ingefäraskum och salt — och den som inte dricker alkohol får ingen tråkig avbytarbänk: hela min No Regrets-lista är byggd med samma kärlek, från Virgin Prince till alkoholfri Coffee Granita i tre smaker. Kaffet? Självklart. Det är därför det står Café på skylten.</p>
-<p>Umeå är en stad som vaknar sent och lägger sig sent på helgen. Jag är byggd för exakt det.</p>
+<p>Baren är vår scen. Signaturen heter Ghost of Prince — gin, viol, citron, ingefäraskum och salt — och den som inte dricker alkohol får ingen tråkig avbytarbänk: hela vår No Regrets-lista är byggd med samma kärlek, från Virgin Prince till alkoholfri Coffee Granita i tre smaker. Kaffet? Självklart. Det är därför det står Café på skylten.</p>
+<p>Umeå är en stad som vaknar sent och lägger sig sent på helgen. Vi är byggda för exakt det.</p>
 
-<p>Vad menar jag med comfort food? Tänk maten du egentligen längtar efter — generös, het, lite oanständigt god — lagad på riktigt och serverad utan dröjsmål. New York-dinern är förebilden: högt tempo i köket, lågt tempo vid borden. Du ska hinna hit på lunchrasten om du vill, men ingen kommer titta konstigt på dig om du blir kvar till stängning. Det är hela poängen med ordet pleasure i mitt namn — och ordet guilty tar du med en nypa salt. Eller som saltkanten på margaritan.</p>
-<p>Helgerna är min paradgren. Brunchen rullar från öppning — frozen mimosas, kaffe som betyder något och comfort-klassiker tills eftermiddagen ger upp. Sen byter jag skepnad: ljuset sjunker, spellistan vaknar, och den som stannar kvar märker varför tredje akten heter disco. Ingen dresscode, ingen gästlista — bara stämning som stiger med timmarna fram till stängning.</p>
-<p>Jag är en del av Guilty Pleasure-familjen, med en syster i Sundsvall och samma fyra färger i själen: eld, disco, mossa och grädde. Men Umeå är där allt började 2021, och det är här flaggan står. Kom förbi så förstår du.</p>
+<p>Vad menar vi med comfort food? Tänk maten du egentligen längtar efter — generös, het, lite oanständigt god — lagad på riktigt och serverad utan dröjsmål. New York-dinern är förebilden: högt tempo i köket, lågt tempo vid borden. Du ska hinna hit på lunchrasten om du vill, men ingen kommer titta konstigt på dig om du blir kvar till stängning. Det är hela poängen med ordet pleasure i vårt namn — och ordet guilty tar du med en nypa salt. Eller som saltkanten på margaritan.</p>
+<p>Helgerna är vår paradgren. Brunchen rullar från öppning — frozen mimosas, kaffe som betyder något och comfort-klassiker tills eftermiddagen ger upp. Sen byter vi skepnad: ljuset sjunker, spellistan vaknar, och den som stannar kvar märker varför tredje akten heter disco. Ingen dresscode, ingen gästlista — bara stämning som stiger med timmarna fram till stängning.</p>
+<p>Vi är en del av Guilty Pleasure-familjen, med en syster i Sundsvall och samma fyra färger i själen: eld, disco, mossa och grädde. Men Umeå är där allt började 2021, och det är här flaggan står. Kom förbi så förstår du.</p>
 """
 
 SUNDSVALL_STORY = """
-<p class="lead">Mitt i Stenstan, på Storgatan 12, serverar jag finger-licking good food and drinks — all day, everyday.</p>
-<p>Jag är Sundsvalls del av Guilty Pleasure-familjen: samma New York-inspirerade comfort bistro-själ som flaggskeppet i Umeå, men med min egen rytm. Stenstans stenhus och Storgatans puls sätter tonen — hit kommer du för en lång brunch i helgen, en middag som inte har bråttom, eller en fredagskväll som växer till något mer. Fredag och lördag håller jag öppet till klockan ett.</p>
+<p class="lead">Mitt i Stenstan, på Storgatan 12, serverar vi finger-licking good food and drinks — all day, everyday.</p>
+<p>Vi är Sundsvalls del av Guilty Pleasure-familjen: samma New York-inspirerade comfort bistro-själ som flaggskeppet i Umeå, men med vår egen rytm. Stenstans stenhus och Storgatans puls sätter tonen — hit kommer du för en lång brunch i helgen, en middag som inte har bråttom, eller en fredagskväll som växer till något mer. Fredag och lördag håller vi öppet till klockan ett.</p>
 <p>Till skillnad från vår syster i norr tar vi emot bordsbokningar — boka online så står bordet redo när du kommer. Men dörren är lika öppen för dig som bara svänger förbi: drop-in är alltid välkommet, och baren har alltid plats för en till. Hundar? Välkomna, alltid.</p>
 <p>Ur baren händer samma magi som i Umeå: Ghost of Prince är signaturen, Frozen Blood Orange Mimosa äger bruncherna, och hela No Regrets-listan är alkoholfri på riktigt — inte en eftertanke. Menyn byter skepnad med säsongen, så fråga vad som är nytt.</p>
-<p>Sundsvall har alltid vetat hur man har trevligt. Jag är bara stället där det händer.</p>
+<p>Sundsvall har alltid vetat hur man har trevligt. Vi är bara stället där det händer.</p>
 
-<p>Ett praktiskt ord på vägen: helgkvällar är det klokt att boka — Stenstan fylls snabbt och mina bord är populära. Vardagsluncher och eftermiddagar funkar drop-in nästan alltid. Kommer ni som större sällskap, maila mig på sundsvall@guiltypleasure.se så löser vi det tillsammans. Och följ @guiltypleasure.se på Instagram — där droppar nyheterna först, nästan varje dag.</p>
+<p>Ett praktiskt ord på vägen: helgkvällar är det klokt att boka — Stenstan fylls snabbt och våra bord är populära. Vardagsluncher och eftermiddagar funkar drop-in nästan alltid. Kommer ni som större sällskap, maila oss på sundsvall@guiltypleasure.se så löser vi det tillsammans. Och följ @guiltypleasure.se på Instagram — där droppar nyheterna först, nästan varje dag.</p>
 
-<p>Comfort food på mitt vis betyder mat utan krusiduller men med full effekt — New York-diner i själen, Norrland i hjärtat. Kom på lunchen, kom på middagen, kom bara. Tempot i köket är högt så att tempot vid ditt bord kan vara precis så lågt du vill. Och kaffet tar jag på största allvar; det är därför det står Café på skylten.</p>
-<p>Helgerna har tre akter även här. Brunchen öppnar spelet, middagen bygger vidare, och när fredags- och lördagskvällarna närmar sig midnatt har tredje akten — disco — tagit över rummet. Stenstan utanför fönstren har sett det mesta sedan 1800-talet, men jag vågar påstå att den sett få ställen med den här kombinationen av frozen mimosas och discokänsla.</p>
-<p>Jag är Sundsvallsdelen av Guilty Pleasure-familjen — flaggskeppet ligger i Umeå, men själen är densamma: fyra färger, en attityd, och övertygelsen att livet är för kort för trista ställen. Välkommen in.</p>
+<p>Comfort food på vårt vis betyder mat utan krusiduller men med full effekt — New York-diner i själen, Norrland i hjärtat. Kom på lunchen, kom på middagen, kom bara. Tempot i köket är högt så att tempot vid ditt bord kan vara precis så lågt du vill. Och kaffet tar vi på största allvar; det är därför det står Café på skylten.</p>
+<p>Helgerna har tre akter även här. Brunchen öppnar spelet, middagen bygger vidare, och när fredags- och lördagskvällarna närmar sig midnatt har tredje akten — disco — tagit över rummet. Stenstan utanför fönstren har sett det mesta sedan 1800-talet, men vi vågar påstå att den sett få ställen med den här kombinationen av frozen mimosas och discokänsla.</p>
+<p>Vi är Sundsvallsdelen av Guilty Pleasure-familjen — flaggskeppet ligger i Umeå, men själen är densamma: fyra färger, en attityd, och övertygelsen att livet är för kort för trista ställen. Välkommen in.</p>
 """
 
 UMEA_FAQ = [
@@ -636,7 +704,7 @@ def city_page(key):
   </section>
   <div class="marquee" aria-hidden="true"><span>BRUNCH · DINNER · DISCO · BRUNCH · DINNER · DISCO · BRUNCH · DINNER · DISCO · BRUNCH · DINNER · DISCO · </span></div>
   <section class="wrap story">
-    <div class="kicker">Min historia</div>
+    <div class="kicker">Vår historia</div>
     <h2>Det här är <span class="accent">GP's {c['name']}</span></h2>
     {story}
   </section>
@@ -692,7 +760,7 @@ def hub():
     {LOGO}
     <div class="eyebrow">New York-inspirerad comfort bistro · Umeå &amp; Sundsvall</div>
     <h1>Where cravings meet good vibes</h1>
-    <p class="sub">Jag serverar good mood comfort food, snabbt — med en cheeky attityd. Brunch, dinner &amp; disco i två städer. Välj din.</p>
+    <p class="sub">Vi serverar good mood comfort food, snabbt — med en cheeky attityd. Brunch, dinner &amp; disco i två städer. Välj din.</p>
     <div class="cta-row">
       <a class="btn btn-pink" href="umea/index.html">GP's Umeå</a>
       <a class="btn btn-pink" href="sundsvall/index.html">GP's Sundsvall</a>
@@ -706,7 +774,7 @@ def hub():
     <div class="acts">
       <article class="act"><span class="tagpill">Akt 1</span><h3>Brunch</h3><p>Långa förmiddagar, frozen mimosas och comfort-klassiker. Kom hungrig, gå lycklig.</p></article>
       <article class="act"><span class="tagpill">Akt 2</span><h3>Dinner</h3><p>New York-bistro möter norrländsk gästvänlighet. Maten kommer snabbt — sällskapet stannar länge.</p></article>
-      <article class="act"><span class="tagpill">Akt 3</span><h3>Disco</h3><p>När mörkret faller vrider jag upp volymen. Fredagar och lördagar öppet till ett.</p></article>
+      <article class="act"><span class="tagpill">Akt 3</span><h3>Disco</h3><p>När mörkret faller vrider vi upp volymen. Fredagar och lördagar öppet till ett.</p></article>
     </div>
   </section>
   <section class="wrap surf-moss" id="signaturer">
@@ -742,7 +810,7 @@ def hub():
     <div class="kicker">Nästan dagligen i flödet</div>
     <h2>Följ <span class="accent">@guiltypleasure.se</span></h2>
     <p>Dagens rätt, nya drinkar och allt som händer efter mörkrets inbrott — det droppar först på Instagram.</p>
-    <a class="btn btn-pink" href="https://www.instagram.com/guiltypleasure.se/" rel="noopener">Följ mig på Instagram</a>
+    <a class="btn btn-pink" href="https://www.instagram.com/guiltypleasure.se/" rel="noopener">Följ oss på Instagram</a>
   </section>
 </main>
 """ + footer("")
@@ -893,6 +961,20 @@ if __name__ == "__main__":
         status = "OK " if uppmatt >= krav else "FEL"
         report.append(f"  [{status}] {namn}: {uppmatt:.2f}:1 (krav {krav})")
         assert uppmatt >= krav, f"KONTRASTBROTT: {namn} = {uppmatt:.2f}:1, krävs {krav}:1"
+
+    # A11y-bindningsgrind: selector -> färgpar -> STORLEK (se QA_BOUND).
+    # Failar om en fixad deklaration försvinner, om den gamla regressionen
+    # återvänder, eller om paret inte klarar kravet för sin storlek.
+    for namn, maste, aldrig, fg, bg, px, fet in QA_BOUND:
+        assert maste in CSS, f"A11Y-BINDNING BRUTEN: '{maste}' saknas i CSS — {namn}"
+        if aldrig:
+            assert aldrig not in CSS, f"A11Y-REGRESSION: '{aldrig}' är tillbaka i CSS — {namn}"
+        krav = wcag_krav(px, fet)
+        r = ratio(fg, bg)
+        status = "OK " if r >= krav else "FEL"
+        report.append(f"  [{status}] a11y-bindning · {namn}: {r:.2f}:1 (krav {krav})")
+        assert r >= krav, f"A11Y-BINDNING: {namn} = {r:.2f}:1, krävs {krav}:1"
+    report.append(f"a11y-bindningar: {len(QA_BOUND)} selector->par->storlek, alla gröna")
     # ordräkning stadstexter
     import html as h
     for key,story in (("umea",UMEA_STORY),("sundsvall",SUNDSVALL_STORY)):

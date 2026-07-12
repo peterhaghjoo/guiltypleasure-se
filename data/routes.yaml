@@ -1,0 +1,87 @@
+# Uppdateras när sidor tillkommer; qa-grindar kan läsa denna.
+#
+# Route-manifest: varje sida som bygget lägger i public/ (verkstans backlog-
+# punkt 2). Handskriven — INTE genererad — och kontrollerad mot public/ efter
+# bygget 2026-07-11 (kedjan i ci_build.sh, 10 sidor). Skäl: manifestet ska
+# vara ett facit att granska bygget MOT, inte en spegel av det. Stämmer den
+# inte längre är det antingen en ny sida (uppdatera hit) eller en bugg (laga).
+#
+# Fält per sida:
+#   path             — URL-stig på sajten (katalog-URL:er slutar med /)
+#   lang             — sidans <html lang="">
+#   canonical        — absolut canonical-URL (null = ingen, t.ex. 404)
+#   hreflang_partner — andra språkets URL i det bidirektionella hreflang-paret
+#                      (null = sidan har ingen språkpartner än)
+#   generator        — vilken build-fil som skriver sidan
+#   in_sitemap       — om URL:en ska stå i sitemap.xml
+
+routes:
+  - path: /
+    lang: sv
+    canonical: https://www.guiltypleasure.se/
+    hreflang_partner: https://www.guiltypleasure.se/en/
+    generator: build.py
+    in_sitemap: true
+
+  - path: /umea/
+    lang: sv
+    canonical: https://www.guiltypleasure.se/umea/
+    hreflang_partner: https://www.guiltypleasure.se/en/umea/
+    generator: build.py
+    in_sitemap: true
+
+  - path: /sundsvall/
+    lang: sv
+    canonical: https://www.guiltypleasure.se/sundsvall/
+    hreflang_partner: https://www.guiltypleasure.se/en/sundsvall/
+    generator: build.py
+    in_sitemap: true
+
+  - path: /meny/
+    lang: sv
+    canonical: https://www.guiltypleasure.se/meny/
+    hreflang_partner: https://www.guiltypleasure.se/en/meny/
+    generator: build_menu.py
+    in_sitemap: true
+
+  - path: /umea/brunch/
+    lang: sv
+    canonical: https://www.guiltypleasure.se/umea/brunch/
+    hreflang_partner: null   # ingen engelsk brunchsida än
+    generator: build_intent.py
+    in_sitemap: true
+
+  - path: /en/
+    lang: en
+    canonical: https://www.guiltypleasure.se/en/
+    hreflang_partner: https://www.guiltypleasure.se/
+    generator: build_en.py
+    in_sitemap: true
+
+  - path: /en/umea/
+    lang: en
+    canonical: https://www.guiltypleasure.se/en/umea/
+    hreflang_partner: https://www.guiltypleasure.se/umea/
+    generator: build_en_cities.py
+    in_sitemap: true
+
+  - path: /en/sundsvall/
+    lang: en
+    canonical: https://www.guiltypleasure.se/en/sundsvall/
+    hreflang_partner: https://www.guiltypleasure.se/sundsvall/
+    generator: build_en_cities.py
+    in_sitemap: true
+
+  - path: /en/meny/
+    lang: en
+    canonical: https://www.guiltypleasure.se/en/meny/
+    hreflang_partner: https://www.guiltypleasure.se/meny/
+    generator: build_menu_en.py
+    in_sitemap: true
+
+  - path: /404.html
+    lang: sv   # tvåspråkig text, svensk html-lang; alltid noindex
+    canonical: null
+    hreflang_partner: null
+    generator: build.py
+    in_sitemap: false

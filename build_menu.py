@@ -157,27 +157,34 @@ def section_cards(data):
         cards.append(f'<div class="menucard" style="max-width:none;margin:0 0 22px"><div class="mc-head"><span class="tagpill">{rubrik}</span></div>{rows(items)}</div>')
     return "\n".join(cards)
 
-url="https://www.guiltypleasure.se/meny/"
-title="Meny — GP's Guilty Pleasure Café | Mat, cocktails, vin & öl"
-desc="Hela GP's sommarmeny 2026: comfort food, pizza, cocktails, No Regrets 0.0 %, vinlista och öl. Samma meny hela dagen — brunch, dinner & disco."
+def main():
+    # Day & Night Deal-kortet: eldram på KORTET, disco-text i PILLEN — aldrig två
+    # starka färger i samma element (brandregeln, CLAUDE.md). Fram till 2026-07-11
+    # stod var(--night)/var(--pink)/var(--flame) här — tokens från före design-
+    # portningen som aldrig funnits i :root, så kortet renderade OSTYLAT. Riktiga
+    # tokens nu: --fire på grädde (3,25:1 >= 3,0 UI-krav) och --disco på --moss
+    # (8,20:1 >= 4,5) — båda paren bevakas redan av QA_REQUIRED i build.py.
+    url="https://www.guiltypleasure.se/meny/"
+    title="Meny — GP's Guilty Pleasure Café | Mat, cocktails, vin & öl"
+    desc="Hela GP's sommarmeny 2026: comfort food, pizza, cocktails, No Regrets 0.0 %, vinlista och öl. Samma meny hela dagen — brunch, dinner & disco."
 
-menu_schema = {"@context":"https://schema.org","@type":"Menu","@id":url+"#menu",
-  "name":"GP's meny — Sommar 2026","inLanguage":"sv",
-  "hasMenuSection":[
-    {"@type":"MenuSection","name":sek,"hasMenuItem":[
-        {"@type":"MenuItem","name":n,"description":d,"offers":{"@type":"Offer","price":p.split(" / ")[0],"priceCurrency":"SEK"}}
-        for n,p,d,_ in items]}
-    for sek,items in (MAT+BAR)]}
-schema=('<script type="application/ld+json">'+json.dumps(menu_schema,ensure_ascii=False)+'</script>'
-        + "\n" + breadcrumbs([("Hem","https://www.guiltypleasure.se/"),("Meny",url)], url))
+    menu_schema = {"@context":"https://schema.org","@type":"Menu","@id":url+"#menu",
+      "name":"GP's meny — Sommar 2026","inLanguage":"sv",
+      "hasMenuSection":[
+        {"@type":"MenuSection","name":sek,"hasMenuItem":[
+            {"@type":"MenuItem","name":n,"description":d,"offers":{"@type":"Offer","price":p.split(" / ")[0],"priceCurrency":"SEK"}}
+            for n,p,d,_ in items]}
+        for sek,items in (MAT+BAR)]}
+    schema=('<script type="application/ld+json">'+json.dumps(menu_schema,ensure_ascii=False)+'</script>'
+            + "\n" + breadcrumbs([("Hem","https://www.guiltypleasure.se/"),("Meny",url)], url))
 
-html = head(title,desc,"/meny/",extra_schema=schema,fontpath="../fonts/",og="og-meny.png") + topbar("../") + f"""
+    html = head(title,desc,"/meny/",extra_schema=schema,fontpath="../fonts/",og="og-meny.png") + topbar("../") + f"""
 <main id="top">
   <div class="wrap crumbs"><a href="../index.html">GP's</a> / Meny</div>
   <section class="hero wrap" style="padding-top:34px;padding-bottom:20px">
     <div class="eyebrow">All day — samma meny hela dagen · Sommar 2026 · Mån–Sön</div>
     <h1>Drypande god mat &amp; drinkar som håller historierna vid liv</h1>
-    <p class="sub">Min meny byter skepnad med säsongen — det här är sommaren. Priser i kronor. Allergier eller veganskt? Fråga mig, jag hjälper dig.</p>
+    <p class="sub">Vår meny byter skepnad med säsongen — det här är sommaren. Priser i kronor. Allergier eller veganskt? Fråga oss, vi hjälper dig.</p>
     <div class="cta-row"><a class="btn btn-pink" href="#mat">Maten</a><a class="btn btn-line" href="#bar">Baren</a></div>
   </section>
   <div class="marquee" aria-hidden="true"><span>DAY &amp; NIGHT DEAL · 1 SMALL + 1 BIG = 299 · LOBSTER +50 · STEAK +100 · DAY &amp; NIGHT DEAL · 1 SMALL + 1 BIG = 299 · LOBSTER +50 · STEAK +100 · </span></div>
@@ -185,8 +192,8 @@ html = head(title,desc,"/meny/",extra_schema=schema,fontpath="../fonts/",og="og-
     <div class="kicker">Sida 1</div>
     <h2>Maten <span class="accent">— drypande god</span></h2>
     {section_cards(MAT)}
-    <div class="menucard" style="max-width:none;border-color:var(--flame)">
-      <div class="mc-head"><span class="tagpill" style="background:var(--night);color:var(--pink);border:1.5px solid var(--flame)">Day &amp; Night Deal</span></div>
+    <div class="menucard" style="max-width:none;border-color:var(--fire)">
+      <div class="mc-head"><span class="tagpill" style="background:var(--moss);color:var(--disco)">Day &amp; Night Deal</span></div>
       <details class="mrow"><summary><b>1 Small Plate + 1 Big Plate</b><span class="dots"></span><span class="price">299</span></summary><p>Gäller hela dagen, hela kvällen. Lobster +50 · Steak +100.</p></details>
     </div>
   </section>
@@ -198,44 +205,50 @@ html = head(title,desc,"/meny/",extra_schema=schema,fontpath="../fonts/",og="og-
   </section>
 </main>
 """ + footer("../")
-from build import fix_amps
-(ROOT/"meny/index.html").write_text(fix_amps(html), encoding="utf-8")
+    from build import fix_amps
+    (ROOT/"meny/index.html").write_text(fix_amps(html), encoding="utf-8")
 
-# --- patcha övriga sidor: nav-länk till menyn + rätta signaturpriser ---
-def patch(p, repl):
-    f=(ROOT/p); s=f.read_text(encoding="utf-8"); changed=False
-    for a,b in repl:
-        if a in s: s=s.replace(a,b); changed=True
-    f.write_text(s, encoding="utf-8"); return changed
+    # --- patcha övriga sidor: nav-länk till menyn + rätta signaturpriser ---
+    def patch(p, repl):
+        f=(ROOT/p); s=f.read_text(encoding="utf-8"); changed=False
+        for a,b in repl:
+            if a in s: s=s.replace(a,b); changed=True
+        f.write_text(s, encoding="utf-8"); return changed
 
-price_fix = [
-  ('Hela menyn får du på plats — den byter skepnad med säsongen.',
-   '<a href="MENYPATH">Se hela menyn →</a> Den byter skepnad med säsongen.'),
-]
-for p,menypath,navlabel in (("index.html","meny/index.html","Meny"),
-                            ("umea/index.html","../meny/index.html","Meny"),
-                            ("sundsvall/index.html","../meny/index.html","Meny"),
-                            ("en/index.html","../meny/index.html","Menu")):
-    pfx = "" if p=="index.html" else "../"
-    nav_add = [('<a href="{0}umea/index.html">Umeå</a>'.format(pfx),
-                '<a href="{1}">{2}</a>\n      <a href="{0}umea/index.html">Umeå</a>'.format(pfx, menypath, navlabel))]
-    patch(p, nav_add + [(a, b.replace("MENYPATH",menypath)) for a,b in price_fix])
+    price_fix = [
+      ('Hela menyn får du på plats — den byter skepnad med säsongen.',
+       '<a href="MENYPATH">Se hela menyn →</a> Den byter skepnad med säsongen.'),
+    ]
+    # OBS: en/index.html får menypath "meny/index.html" — det är den ENGELSKA
+    # menyn (/en/meny/, byggd av build_menu_en.py), inte den svenska. Svenska
+    # sidor behåller sin svenska meny-länk. (Verkstans "språkläcka".)
+    for p,menypath,navlabel in (("index.html","meny/index.html","Meny"),
+                                ("umea/index.html","../meny/index.html","Meny"),
+                                ("sundsvall/index.html","../meny/index.html","Meny"),
+                                ("en/index.html","meny/index.html","Menu")):
+        pfx = "" if p=="index.html" else "../"
+        nav_add = [('<a href="{0}umea/index.html">Umeå</a>'.format(pfx),
+                    '<a href="{1}">{2}</a>\n      <a href="{0}umea/index.html">Umeå</a>'.format(pfx, menypath, navlabel))]
+        patch(p, nav_add + [(a, b.replace("MENYPATH",menypath)) for a,b in price_fix])
 
-# sitemap + verifiering
-sm=(ROOT/"sitemap.xml").read_text(encoding="utf-8")
-if "/meny/" not in sm:
-    sm=sm.replace("</urlset>",'  <url><loc>https://www.guiltypleasure.se/meny/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>\n</urlset>')
-    (ROOT/"sitemap.xml").write_text(sm, encoding="utf-8")
+    # sitemap + verifiering
+    sm=(ROOT/"sitemap.xml").read_text(encoding="utf-8")
+    if "/meny/" not in sm:
+        sm=sm.replace("</urlset>",'  <url><loc>https://www.guiltypleasure.se/meny/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>\n</urlset>')
+        (ROOT/"sitemap.xml").write_text(sm, encoding="utf-8")
 
-s=(ROOT/"meny/index.html").read_text(encoding="utf-8")
-for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', s, re.S): json.loads(b)
-assert "Ghost of Prince" in s and "Barolo" in s and "tel:" not in s
-n_items = sum(len(i) for _,i in MAT+BAR)
-print(f"meny/index.html: {len(s)//1024} KB · {n_items} rätter/drycker · schema OK · sitemap {'/meny/' in sm}")
-for p in ("index.html","umea/index.html","sundsvall/index.html","en/index.html"):
-    t=(ROOT/p).read_text(encoding="utf-8")
-    ok_nav = "meny/index.html" in t
-    ok_price = 'price">149' in t and '159' not in t
-    ok_foot = ("Se hela menyn" in t) or ("See the full menu" in t)
-    assert ok_nav and ok_price, f"{p}: nav={ok_nav} price={ok_price}"
-    print(p, "meny-länk:", ok_nav, "· Ghost 149:", ok_price, "· meny-foot:", ok_foot)
+    s=(ROOT/"meny/index.html").read_text(encoding="utf-8")
+    for b in re.findall(r'<script type="application/ld\+json">(.*?)</script>', s, re.S): json.loads(b)
+    assert "Ghost of Prince" in s and "Barolo" in s and "tel:" not in s
+    n_items = sum(len(i) for _,i in MAT+BAR)
+    print(f"meny/index.html: {len(s)//1024} KB · {n_items} rätter/drycker · schema OK · sitemap {'/meny/' in sm}")
+    for p in ("index.html","umea/index.html","sundsvall/index.html","en/index.html"):
+        t=(ROOT/p).read_text(encoding="utf-8")
+        ok_nav = "meny/index.html" in t
+        ok_price = 'price">149' in t and '159' not in t
+        ok_foot = ("Se hela menyn" in t) or ("See the full menu" in t)
+        assert ok_nav and ok_price, f"{p}: nav={ok_nav} price={ok_price}"
+        print(p, "meny-länk:", ok_nav, "· Ghost 149:", ok_price, "· meny-foot:", ok_foot)
+
+if __name__ == "__main__":
+    main()

@@ -49,6 +49,7 @@ FORBJUDET = [
     ("Vatten fixar",        "serviceåtagande utan källa"),
     ("water's already out", "serviceåtagande utan källa (EN)"),
     ("water waiting",       "serviceåtagande utan källa (EN)"),
+    ("sort the water",      "serviceåtagande utan källa (EN) — hundvattenfrasen i vi-form, läcka från röstväxlingsarbetet (PR #7)"),
     ("är vegetariska",      "dietmärkning per rätt utan källa — se BACKLOG 2.1"),
     ("are vegetarian",      "dietmärkning per rätt utan källa (EN)"),
     ("39–89",               "prisspann som motsägs av menykällan (No Regrets är 79–99)"),
